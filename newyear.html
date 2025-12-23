@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>New Era Countdown</title>
+    <style>
+        /* 引入类似通缉令的西部风格字体 */
+        @import url('https://fonts.googleapis.com/css2?family=Rye&family=Roboto+Slab:wght@700&display=swap');
+
+        :root {
+            --paper-bg: #f4e4bc;
+            --paper-border: #d7c296;
+            --wood-dark: #3e2723;
+            --luffy-red: #d32f2f;
+            --gold: #ffeb3b;
+            --ocean-blue: #0277bd;
+            --ocean-deep: #01579b;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            font-family: 'Roboto Slab', serif;
+            background: linear-gradient(to bottom, #87CEEB, #E0F7FA); /* 天空 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* === 背景：动态大海 === */
+        .ocean {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            background: var(--ocean-blue);
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            top: -50px;
+            left: -25%;
+            width: 150%;
+            height: 100px;
+            background: var(--ocean-blue);
+            border-radius: 50%;
+            animation: wave-rock 4s ease-in-out infinite alternate;
+        }
+        .wave:nth-child(2) {
+            top: -60px;
+            left: 0;
+            background: var(--ocean-deep);
+            animation-duration: 5s;
+            opacity: 0.7;
+        }
+
+        /* === 核心：悬赏令卡片 === */
+        .poster-container {
+            position: relative;
+            z-index: 10;
+            width: 320px;
+            height: 480px;
+            /* 纸张纹理 */
+            background-color: var(--paper-bg);
+            background-image: repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 4px);
+            border: 2px solid #5d4037;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            /* 随风摆动动画 */
+            animation: float-poster 3s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        /* 悬赏令顶部 */
+        .poster-header {
+            font-family: 'Rye', serif;
+            font-size: 3rem;
+            color: var(--wood-dark);
+            text-transform: uppercase;
+            line-height: 1;
+            margin-bottom: 5px;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .poster-sub {
+            font-family: 'Rye', serif;
+            font-size: 0.8rem;
+            color: var(--wood-dark);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--wood-dark);
+            width: 90%;
+            text-align: center;
+        }
+
+        /* 图片区域 (用SVG画草帽) */
+        .image-box {
+            width: 260px;
+            height: 200px;
+            background: linear-gradient(to bottom, #81d4fa, #b3e5fc);
+            border: 3px solid var(--wood-dark);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 倒计时区域 (模仿悬赏金额) */
+        .bounty-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .berry-symbol {
+            font-family: 'Rye', serif;
+            font-size: 1.2rem;
+            color: var(--wood-dark);
+            margin-right: 5px;
+            align-self: flex-start;
+            padding-left: 20px;
+        }
+
+        .timer-display {
+            font-family: 'Rye', serif;
+            font-size: 2.2rem;
+            color: var(--wood-dark);
+            letter-spacing: 1px;
+        }
+
+        .label-text {
+            font-size: 0.8rem;
+            color: #5d4037;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        /* 底部文字 */
+        .footer-text {
+            margin-top: auto;
+            font-family: 'Rye', serif;
+            font-size: 1.5rem;
+            color: var(--wood-dark);
+            text-transform: uppercase;
+        }
+
+        /* === 草帽 SVG 样式 === */
+        .straw-hat {
+            width: 150px;
+            height: auto;
+            filter: drop-shadow(5px 5px 0px rgba(0,0,0,0.2));
+            animation: shake 5s infinite;
+        }
+
+        /* === 漫画特效 DON!! (初始隐藏) === */
+        .manga-effect {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-family: 'Rye', serif;
+            font-size: 8rem;
+            color: black;
+            text-shadow: 4px 4px 0 white, -2px -2px 0 white;
+            z-index: 100;
+            pointer-events: none;
+            white-space: nowrap;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* === 跨年后的状态 === */
+        body.new-era .poster-container {
+            background: #fff8e1;
+            box-shadow: 0 0 50px var(--gold);
+            border-color: var(--luffy-red);
+        }
+
+        body.new-era .image-box {
+            background: var(--gold); /* 变成宝藏背景 */
+        }
+
+        body.new-era .manga-effect {
+            transform: translate(-50%, -50%) scale(1);
+            animation: impact-shake 0.5s;
+        }
+
+        /* === 动画 Keyframes === */
+        @keyframes float-poster {
+            0%, 100% { transform: rotate(1deg) translateY(0); }
+            50% { transform: rotate(-1deg) translateY(-10px); }
+        }
+
+        @keyframes wave-rock {
+            from { transform: rotate(-2deg); }
+            to { transform: rotate(2deg); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: rotate(0); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        @keyframes impact-shake {
+            0% { transform: translate(-50%, -50%) scale(0.5); }
+            60% { transform: translate(-50%, -50%) scale(1.2); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="ocean">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="manga-effect">DON!!</div>
+
+    <div class="poster-container" id="poster">
+        <div class="poster-header">WANTED</div>
+        <div class="poster-sub" id="statusText">Dead or Alive</div>
+
+        <div class="image-box" id="imgBox">
+            <svg class="straw-hat" viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="100" cy="100" rx="90" ry="25" fill="#FDD835" stroke="#3E2723" stroke-width="3"/>
+                <path d="M 50 100 Q 50 20 100 20 Q 150 20 150 100" fill="#FDD835" stroke="#3E2723" stroke-width="3"/>
+                <path d="M 52 90 Q 52 70 100 70 Q 148 70 148 90 L 150 100 Q 150 110 100 110 Q 50 110 50 100 Z" fill="#D32F2F" stroke="#3E2723" stroke-width="2"/>
+            </svg>
+        </div>
+
+        <div class="bounty-section">
+            <div class="berry-symbol">TO: <span id="targetYear">2026</span></div>
+            <div class="timer-display" id="countdown">00:00:00</div>
+            <div class="label-text">Time Remaining</div>
+        </div>
+
+        <div class="footer-text" id="footerText">MARINE</div>
+    </div>
+
+    <script>
+        // --- 逻辑控制 ---
+        const currentYear = new Date().getFullYear();
+        const nextYear = currentYear + 1;
+        document.getElementById('targetYear').innerText = nextYear;
+        
+        const newYearTime = new Date(`Jan 1, ${nextYear} 00:00:00`).getTime();
+        // const newYearTime = new Date().getTime() + 5000; // 调试：5秒后触发
+
+        const countdownEl = document.getElementById('countdown');
+        const poster = document.getElementById('poster');
+        const statusText = document.getElementById('statusText');
+        const footerText = document.getElementById('footerText');
+        const body = document.body;
+        
+        let isNewEra = false;
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const gap = newYearTime - now;
+
+            if (gap <= 0 && !isNewEra) {
+                triggerNewEra();
+                return;
+            } else if (gap > 0) {
+                const d = Math.floor(gap / (1000 * 60 * 60 * 24));
+                const h = Math.floor((gap % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((gap % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((gap % (1000 * 60)) / 1000);
+
+                // 格式化：天数如果不为0，则显示天数，否则显示时分秒
+                // 为了模仿悬赏金格式，我们把它们连起来，或者用逗号分隔
+                // 这里采用： 天, 时:分:秒
+                let text = "";
+                if (d > 0) text += `${d}D `;
+                text += `${h < 10 ? '0'+h : h}:${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+                
+                countdownEl.innerText = text;
+            }
+        }
+
+        function triggerNewEra() {
+            isNewEra = true;
+            countdownEl.innerText = "HAPPY NEW YEAR";
+            
+            // 触发特效类
+            body.classList.add('new-era');
+            
+            // 更改文字内容
+            statusText.innerText = "Let's Sail!";
+            footerText.innerText = "TO THE NEW WORLD";
+            
+            // 漫画音效出现
+            // 如果是中文语境，其实 "DON!!" 也可以改成 "咚!!"
+            // 这里保持英文 DON!! 更有原版漫画味
+            
+            // 简单的震动效果
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+        }
+
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+    </script>
+</body>
+</html>
