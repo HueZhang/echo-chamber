@@ -170,7 +170,7 @@
             align-items: center;
             opacity: 0;
             transform: scale(0.8); 
-            pointer-events: none;
+            pointer-events: none; /* 注意：这里原本导致星星无法点击 */
             transition: all 1.5s ease 0.5s; 
             position: absolute;
             top: 50%;
@@ -216,6 +216,9 @@
             margin-bottom: -15px;
             z-index: 4;
             animation: twinkle 2s infinite alternate;
+            /* === 新增样式: 让星星可以被点击 === */
+            cursor: pointer;
+            pointer-events: auto; /* 强制覆盖父级的 pointer-events: none */
         }
 
         .message-box {
@@ -298,7 +301,7 @@
         </div>
 
         <div class="tree-container" id="tree">
-            <div class="star">★</div>
+            <div class="star" id="closeStar">★</div>
             <div class="glass-triangle t-top" style="--s: 0.8"></div>
             <div class="glass-triangle t-mid" style="--s: 1.0"></div>
             <div class="glass-triangle t-bot" style="--s: 1.2"></div>
@@ -317,7 +320,8 @@
         const hintText = document.getElementById('hintText');
         const tree = document.getElementById('tree');
         const msg = document.getElementById('message');
-        const audio = document.getElementById('bgm'); // 获取音频元素
+        const audio = document.getElementById('bgm');
+        const closeStar = document.getElementById('closeStar'); // 获取星星元素
         
         cardWrapper.addEventListener('click', openCard);
         cardWrapper.addEventListener('touchstart', function(e) {
@@ -326,31 +330,75 @@
         }, {passive: false});
 
         function openCard() {
-            // 0. 播放音乐
-            // 用户已经产生了点击交互，此时调用 play() 不会被浏览器拦截
+            // 如果已经是打开状态，防止重复点击触发动画
+            if (cardWrapper.classList.contains('card-active')) return;
+
             audio.play().catch(error => {
                 console.log("音频播放失败 (可能是路径错误或交互问题):", error);
             });
 
-            // 1. 立即隐藏提示文字
             hintText.classList.add('hint-hidden');
-
-            // 2. 贺卡翻开
             cardWrapper.classList.add('card-active');
 
-            // 3. 延迟 0.8秒后消失
             setTimeout(() => {
                 cardWrapper.classList.add('card-vanish');
             }, 800);
 
-            // 4. 延迟 1.0秒后显示树
             setTimeout(() => {
                 tree.classList.add('tree-show');
                 msg.classList.add('text-show');
             }, 1000);
         }
 
-        // 下雪背景
+        // === 新增：点击星星3次重置逻辑 ===
+        let starClickCount = 0;
+        
+        closeStar.addEventListener('click', function(e) {
+            // 阻止事件冒泡，防止点星星时触发其他容器的点击事件
+            e.stopPropagation();
+            
+            starClickCount++;
+            console.log(`星星被点击: ${starClickCount} 次`);
+
+            if (starClickCount === 3) {
+                resetCard();
+                starClickCount = 0; // 重置计数器
+            }
+        });
+
+        // 兼容移动端触摸
+        closeStar.addEventListener('touchstart', function(e){
+             e.stopPropagation(); // 关键：防止触发card wrapper的事件
+        }, {passive: false});
+
+        function resetCard() {
+            // 1. 暂停音乐并重置进度
+            audio.pause();
+            audio.currentTime = 0;
+
+            // 2. 隐藏圣诞树和文字
+            tree.classList.remove('tree-show');
+            msg.classList.remove('text-show');
+
+            // 3. 动画倒序：等待树消失一点后，显示贺卡
+            setTimeout(() => {
+                // 移除消失状态，让贺卡显形（此时贺卡还是翻开的状态）
+                cardWrapper.classList.remove('card-vanish');
+            }, 600); 
+
+            // 4. 合上贺卡
+            setTimeout(() => {
+                cardWrapper.classList.remove('card-active');
+            }, 1000);
+
+            // 5. 显示提示文字
+            setTimeout(() => {
+                hintText.classList.remove('hint-hidden');
+            }, 1500);
+        }
+
+
+        // 下雪背景 (保持不变)
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
         let width = window.innerWidth;
