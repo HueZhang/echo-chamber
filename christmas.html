@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>For You</title>
+    <title>Merry Christmas</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Great+Vibes&display=swap');
 
         :root {
-            --primary-glow: rgba(255, 215, 0, 0.6);
-            --box-color: #e74c3c;
-            --ribbon-color: #f1c40f;
+            --card-red: #8e1818;
+            --card-gold: #d4af37;
+            --card-white: #fdfefe;
         }
 
         * {
-            /* 移动端核心：去掉点击高亮颜色 */
             -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
         }
@@ -23,15 +22,13 @@
             margin: 0;
             padding: 0;
             height: 100vh;
-            /* 尝试使用动态高度单位适配移动端浏览器地址栏 */
             height: 100dvh; 
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+            background: radial-gradient(circle at center, #2c3e50 0%, #000000 100%);
             overflow: hidden;
             font-family: 'Cinzel', serif;
-            /* 禁止选中文字 */
             user-select: none;
             -webkit-user-select: none;
         }
@@ -55,78 +52,115 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            perspective: 1500px; 
         }
 
-        /* === 礼盒样式 === */
-        .gift-box-container {
-            cursor: pointer;
-            position: absolute;
-            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-            /* 增加触摸区域，方便手机点击 */
-            padding: 20px; 
-        }
-
-        .gift-box {
-            width: 100px;
-            height: 100px;
-            background: var(--box-color);
+        /* === 贺卡整体容器 === */
+        .card-wrapper {
             position: relative;
-            border-radius: 12px;
-            box-shadow: 0 0 30px rgba(231, 76, 60, 0.4);
-            animation: bounce 2s infinite;
+            width: 220px;
+            height: 320px;
+            cursor: pointer;
+            z-index: 20;
+            transform-style: preserve-3d; 
+            transition: opacity 1s ease, transform 1s ease; 
         }
 
-        .gift-box::before {
-            content: '';
+        .card-face {
             position: absolute;
-            width: 20px;
-            height: 100%;
-            background: var(--ribbon-color);
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .gift-box::after {
-            content: '';
-            position: absolute;
-            height: 20px;
+            top: 0;
+            left: 0;
             width: 100%;
-            background: var(--ribbon-color);
-            top: 50%;
-            transform: translateY(-50%);
+            height: 100%;
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            backface-visibility: hidden; 
         }
 
-        .gift-lid {
-            width: 110px;
-            height: 25px;
-            background: #c0392b;
-            position: absolute;
-            top: -10px;
-            left: -5px;
-            border-radius: 6px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 2;
+        /* === 1. 内页 (底座) === */
+        .card-inside {
+            background-color: var(--card-white);
+            z-index: 1; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #ddd;
         }
-        .gift-lid::before {
-            content: '';
+
+        .inside-content {
+            width: 90%;
+            height: 90%;
+            border: 2px dashed var(--card-gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .inside-text {
+            font-family: 'Great Vibes', cursive;
+            color: var(--card-red);
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        /* === 2. 封面 (门) === */
+        .card-front {
+            background: linear-gradient(135deg, #a93226 0%, #7b241c 100%);
+            z-index: 2; 
+            transform-origin: left center; 
+            transition: transform 1.0s cubic-bezier(0.25, 1, 0.5, 1); 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .front-border {
             position: absolute;
-            width: 20px;
-            height: 100%;
-            background: var(--ribbon-color);
-            left: 50%;
-            transform: translateX(-50%);
+            top: 15px; left: 15px; right: 15px; bottom: 15px;
+            border: 3px double var(--card-gold);
+            pointer-events: none;
+        }
+
+        .front-text {
+            color: var(--card-gold);
+            font-family: 'Great Vibes', cursive;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .front-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
         }
 
         .click-hint {
             position: absolute;
-            bottom: -20px; /* 调整位置 */
-            width: 200px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: rgba(255,255,255,0.7);
-            font-size: 12px;
+            bottom: -50px;
+            width: 100%; 
             text-align: center;
+            color: rgba(255,255,255,0.6);
+            font-size: 14px;
             letter-spacing: 2px;
-            animation: fade-hint 1.5s infinite alternate;
+            animation: fade-hint 2s infinite;
+            transition: opacity 0.3s ease;
+        }
+
+        /* === 交互动画状态 === */
+        .card-active .card-front {
+            transform: rotateY(-140deg); 
+        }
+
+        .card-vanish {
+            opacity: 0;
+            transform: scale(1.1); 
+            pointer-events: none;
+        }
+
+        .hint-hidden {
+            opacity: 0;
         }
 
         /* === 圣诞树样式 === */
@@ -135,9 +169,14 @@
             flex-direction: column;
             align-items: center;
             opacity: 0;
-            transform: scale(0.5) translateY(50px);
+            transform: scale(0.8); 
             pointer-events: none;
-            transition: all 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: all 1.5s ease 0.5s; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%) scale(0.8);
+            z-index: 5;
         }
 
         .glass-triangle {
@@ -149,7 +188,7 @@
             position: relative;
             margin-bottom: -30px;
             filter: drop-shadow(0 10px 10px rgba(0,0,0,0.1));
-            backdrop-filter: blur(5px); /* 手机端性能优化：降低一点模糊度 */
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
         }
 
@@ -186,11 +225,12 @@
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 1s ease 1s, transform 1s ease 1s;
-            padding: 0 20px; /* 防止文字贴边 */
+            padding: 0 20px;
+            width: 100%; 
+            min-width: 300px;
         }
 
         .main-title {
-            /* 响应式字体：最小24px，最大48px，根据视口宽度调整 */
             font-size: clamp(1.8rem, 8vw, 3rem);
             font-weight: 600;
             text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
@@ -207,15 +247,9 @@
             opacity: 0.8;
         }
 
-        .gift-opened {
-            opacity: 0;
-            transform: scale(2);
-            pointer-events: none;
-        }
-
         .tree-show {
             opacity: 1;
-            transform: scale(1) translateY(0);
+            transform: translate(-50%, -50%) scale(1);
         }
 
         .text-show {
@@ -223,13 +257,9 @@
             transform: translateY(0);
         }
 
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
         @keyframes fade-hint {
-            0% { opacity: 0.3; }
-            100% { opacity: 0.8; }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
         }
         @keyframes float-tree {
             0%, 100% { transform: translateY(0) scale(var(--s, 1)); }
@@ -243,14 +273,28 @@
 </head>
 <body>
 
+    <audio id="bgm" src="./static/merrychristmas.mp3" loop preload="auto"></audio>
+
     <canvas id="snow-canvas"></canvas>
 
     <div class="container">
-        <div class="gift-box-container" id="giftBox">
-            <div class="gift-box">
-                <div class="gift-lid"></div>
+        
+        <div class="card-wrapper" id="cardWrapper">
+            <div class="card-face card-inside">
+                <div class="inside-content">
+                    <div class="inside-text">
+                        Best Wishes<br>For You
+                    </div>
+                </div>
             </div>
-            <div class="click-hint">点击打开🎉</div>
+
+            <div class="card-face card-front">
+                <div class="front-border"></div>
+                <div class="front-text">Christmas</div>
+                <div class="front-icon">🎄</div>
+            </div>
+
+            <div class="click-hint" id="hintText">Tap to Open</div>
         </div>
 
         <div class="tree-container" id="tree">
@@ -260,45 +304,68 @@
             <div class="glass-triangle t-bot" style="--s: 1.2"></div>
             
             <div class="message-box" id="message">
-				  <h1 class="main-title">MERRY CHRISTMAS</h1>
+                <h1 class="main-title">MERRY CHRISTMAS</h1>
                 <p class="sub-title">May your days be merry & bright</p>
-                <p class="sub-title">圣诞快乐🎄</p>
+                <p class="sub-title">圣诞快乐</p>
             </div>
         </div>
     </div>
 
     <script>
-        // 触摸事件处理
-        const giftBox = document.getElementById('giftBox');
+        // 逻辑控制
+        const cardWrapper = document.getElementById('cardWrapper');
+        const hintText = document.getElementById('hintText');
+        const tree = document.getElementById('tree');
+        const msg = document.getElementById('message');
+        const audio = document.getElementById('bgm'); // 获取音频元素
         
-        // 兼容 PC 点击和 手机触摸
-        giftBox.addEventListener('click', openGift);
-        giftBox.addEventListener('touchstart', function(e) {
-            e.preventDefault(); // 防止触发双击缩放等默认行为
-            openGift();
+        cardWrapper.addEventListener('click', openCard);
+        cardWrapper.addEventListener('touchstart', function(e) {
+            e.preventDefault(); 
+            openCard();
         }, {passive: false});
 
-        function openGift() {
-            const tree = document.getElementById('tree');
-            const msg = document.getElementById('message');
+        function openCard() {
+            // 0. 播放音乐
+            // 用户已经产生了点击交互，此时调用 play() 不会被浏览器拦截
+            audio.play().catch(error => {
+                console.log("音频播放失败 (可能是路径错误或交互问题):", error);
+            });
 
-            giftBox.classList.add('gift-opened');
+            // 1. 立即隐藏提示文字
+            hintText.classList.add('hint-hidden');
 
+            // 2. 贺卡翻开
+            cardWrapper.classList.add('card-active');
+
+            // 3. 延迟 0.8秒后消失
+            setTimeout(() => {
+                cardWrapper.classList.add('card-vanish');
+            }, 800);
+
+            // 4. 延迟 1.0秒后显示树
             setTimeout(() => {
                 tree.classList.add('tree-show');
                 msg.classList.add('text-show');
-            }, 300);
+            }, 1000);
         }
 
+        // 下雪背景
         const canvas = document.getElementById('snow-canvas');
         const ctx = canvas.getContext('2d');
         let width = window.innerWidth;
         let height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
+        
+        function resizeCanvas() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
 
         const particles = [];
-        // 手机端减少一点粒子数量以保证流畅省电
         const particleCount = window.innerWidth < 600 ? 80 : 150; 
 
         class Particle {
@@ -330,14 +397,6 @@
             requestAnimationFrame(animate);
         }
         animate();
-
-        // 监听屏幕旋转
-        window.addEventListener('resize', () => {
-            width = window.innerWidth;
-            height = window.innerHeight;
-            canvas.width = width;
-            canvas.height = height;
-        });
     </script>
 </body>
 </html>
