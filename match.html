@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>比赛信息录入系统</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+            background: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 900px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .input-section, .output-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #4b6cb7;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #4b6cb7;
+        }
+        
+        .input-group {
+            margin-bottom: 25px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5eb;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        
+        .input-group input:focus {
+            border-color: #4b6cb7;
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.2);
+            outline: none;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 16px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        #addBtn {
+            background: linear-gradient(to right, #4b6cb7, #3a56a4);
+            color: white;
+            flex: 2;
+        }
+        
+        #addBtn:hover {
+            background: linear-gradient(to right, #3a56a4, #2d447e);
+            transform: translateY(-3px);
+            box-shadow: 0 7px 14px rgba(75, 108, 183, 0.3);
+        }
+        
+        #resetBtn {
+            background: #f8f9fa;
+            color: #6c757d;
+            border: 2px solid #e1e5eb;
+            flex: 1;
+        }
+        
+        #resetBtn:hover {
+            background: #e9ecef;
+            transform: translateY(-3px);
+        }
+        
+        .match-list {
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 15px;
+            border: 2px dashed #e1e5eb;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+        
+        .match-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 5px solid #4b6cb7;
+            transition: all 0.3s;
+        }
+        
+        .match-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .match-league {
+            font-weight: 700;
+            color: #4b6cb7;
+            font-size: 1.2rem;
+        }
+        
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+        
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .team-name {
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-top: 5px;
+        }
+        
+        .vs {
+            font-weight: 900;
+            color: #e74c3c;
+            font-size: 1.5rem;
+            margin: 0 20px;
+        }
+        
+        .empty-list {
+            text-align: center;
+            color: #6c757d;
+            padding: 40px 20px;
+            font-style: italic;
+        }
+        
+        .json-output {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 25px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            overflow-x: auto;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 10px;
+            background: #4b6cb7;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s;
+            z-index: 1000;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5eb;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .delete-btn {
+            background: transparent;
+            color: #e74c3c;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        
+        .delete-btn:hover {
+            background: rgba(231, 76, 60, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-futbol"></i> 比赛信息录入系统</h1>
+            <p>输入联赛、主队和客队信息，点击"添加比赛"按钮生成JSON数组数据</p>
+        </header>
+        
+        <div class="content-wrapper">
+            <div class="input-section">
+                <h2 class="section-title"><i class="fas fa-edit"></i> 输入比赛信息</h2>
+                
+                <div class="input-group">
+                    <label for="league"><i class="fas fa-trophy"></i> 联赛名称</label>
+                    <input type="text" id="league" placeholder="例如：英超联赛">
+                </div>
+                
+                <div class="input-group">
+                    <label for="homeTeam"><i class="fas fa-home"></i> 主队名称</label>
+                    <input type="text" id="homeTeam" placeholder="例如：曼城">
+                </div>
+                
+                <div class="input-group">
+                    <label for="awayTeam"><i class="fas fa-plane"></i> 客队名称</label>
+                    <input type="text" id="awayTeam" placeholder="例如：利物浦">
+                </div>
+                
+                <div class="button-group">
+                    <button id="addBtn">
+                        <i class="fas fa-plus-circle"></i> 添加比赛
+                    </button>
+                    <button id="resetBtn">
+                        <i class="fas fa-redo"></i> 重置表单
+                    </button>
+                </div>
+                
+                <div class="match-list-section">
+                    <h2 class="section-title"><i class="fas fa-list"></i> 已添加的比赛</h2>
+                    <div class="match-list" id="matchList">
+                        <div class="empty-list">暂无比赛信息，请添加比赛</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="output-section">
+                <h2 class="section-title"><i class="fas fa-code"></i> 生成的JSON数据</h2>
+                <div class="json-output" id="jsonOutput">[]</div>
+                
+                <div class="stats">
+                    <div>比赛总数: <span id="matchCount">0</span></div>
+                    <div>数据大小: <span id="dataSize">0</span> 字节</div>
+                    <div>
+                        <button id="copyBtn" style="padding: 8px 15px; font-size: 0.9rem;">
+                            <i class="fas fa-copy"></i> 复制JSON
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>比赛信息录入系统 &copy; 2023 | 使用HTML、CSS和JavaScript实现</p>
+            <p>数据仅存储在浏览器本地，刷新页面会丢失数据，请及时复制保存</p>
+        </footer>
+        
+        <div class="notification" id="notification"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取DOM元素
+            const leagueInput = document.getElementById('league');
+            const homeTeamInput = document.getElementById('homeTeam');
+            const awayTeamInput = document.getElementById('awayTeam');
+            const addBtn = document.getElementById('addBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const matchList = document.getElementById('matchList');
+            const jsonOutput = document.getElementById('jsonOutput');
+            const matchCount = document.getElementById('matchCount');
+            const dataSize = document.getElementById('dataSize');
+            const copyBtn = document.getElementById('copyBtn');
+            const notification = document.getElementById('notification');
+            
+            // 初始化比赛数组
+            let matches = [];
+            
+            // 从本地存储加载数据（如果存在）
+            if (localStorage.getItem('matches')) {
+                try {
+                    matches = JSON.parse(localStorage.getItem('matches'));
+                    updateUI();
+                } catch (e) {
+                    console.error('解析本地存储数据失败:', e);
+                }
+            }
+            
+            // 添加比赛按钮事件
+            addBtn.addEventListener('click', function() {
+                const league = leagueInput.value.trim();
+                const homeTeam = homeTeamInput.value.trim();
+                const awayTeam = awayTeamInput.value.trim();
+                
+                // 验证输入
+                if (!league || !homeTeam || !awayTeam) {
+                    showNotification('请填写所有字段！', 'error');
+                    return;
+                }
+                
+                // 创建比赛对象
+                const match = {
+                    league: league,
+                    homeTeam: homeTeam,
+                    awayTeam: awayTeam
+                };
+                
+                // 添加到数组
+                matches.push(match);
+                
+                // 保存到本地存储
+                saveToLocalStorage();
+                
+                // 更新UI
+                updateUI();
+                
+                // 显示成功通知
+                showNotification(`比赛 "${homeTeam} vs ${awayTeam}" 已添加成功！`, 'success');
+                
+                // 清空表单
+                leagueInput.value = '';
+                homeTeamInput.value = '';
+                awayTeamInput.value = '';
+                
+                // 焦点回到第一个输入框
+                leagueInput.focus();
+            });
+            
+            // 重置按钮事件
+            resetBtn.addEventListener('click', function() {
+                if (matches.length === 0) {
+                    showNotification('当前没有比赛数据可重置', 'info');
+                    return;
+                }
+                
+                if (confirm('确定要重置所有比赛数据吗？此操作不可撤销。')) {
+                    matches = [];
+                    saveToLocalStorage();
+                    updateUI();
+                    showNotification('所有比赛数据已重置', 'success');
+                }
+            });
+            
+            // 复制JSON按钮事件
+            copyBtn.addEventListener('click', function() {
+                const jsonText = JSON.stringify(matches, null, 2);
+                navigator.clipboard.writeText(jsonText).then(() => {
+                    showNotification('JSON数据已复制到剪贴板！', 'success');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    showNotification('复制失败，请手动选择复制', 'error');
+                });
+            });
+            
+            // 删除比赛函数
+            function deleteMatch(id) {
+                matches = matches.filter(match => match.id !== id);
+                saveToLocalStorage();
+                updateUI();
+                showNotification('比赛已删除', 'success');
+            }
+            
+            // 更新UI函数
+            function updateUI() {
+                // 更新比赛列表
+                if (matches.length === 0) {
+                    matchList.innerHTML = '<div class="empty-list">暂无比赛信息，请添加比赛</div>';
+                } else {
+                    matchList.innerHTML = '';
+                    matches.forEach(match => {
+                        const matchItem = document.createElement('div');
+                        matchItem.className = 'match-item';
+                        matchItem.innerHTML = `
+                            <div class="match-header">
+                                <div class="match-league">${match.league}</div>
+                                <button class="delete-btn" data-id="${match.id}">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="match-teams">
+                                <div class="team">
+                                    <i class="fas fa-home"></i>
+                                    <div class="team-name">${match.homeTeam}</div>
+                                </div>
+                                <div class="vs">VS</div>
+                                <div class="team">
+                                    <i class="fas fa-plane"></i>
+                                    <div class="team-name">${match.awayTeam}</div>
+                                </div>
+                            </div>
+                        `;
+                        matchList.appendChild(matchItem);
+                    });
+                    
+                    // 为所有删除按钮添加事件
+                    document.querySelectorAll('.delete-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const id = parseInt(this.getAttribute('data-id'));
+                            deleteMatch(id);
+                        });
+                    });
+                }
+                
+                // 更新JSON输出
+                const jsonText = JSON.stringify(matches, null, 2);
+                jsonOutput.textContent = jsonText;
+                
+                // 更新统计信息
+                matchCount.textContent = matches.length;
+                dataSize.textContent = new Blob([jsonText]).size;
+            }
+            
+            // 保存到本地存储
+            function saveToLocalStorage() {
+                localStorage.setItem('matches', JSON.stringify(matches));
+            }
+            
+            // 显示通知函数
+            function showNotification(message, type = 'info') {
+                // 设置通知颜色
+                if (type === 'error') {
+                    notification.style.background = '#e74c3c';
+                } else if (type === 'success') {
+                    notification.style.background = '#2ecc71';
+                } else {
+                    notification.style.background = '#4b6cb7';
+                }
+                
+                notification.textContent = message;
+                notification.classList.add('show');
+                
+                // 3秒后隐藏通知
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            }
+            
+            // 输入框回车键支持
+            const inputs = [leagueInput, homeTeamInput, awayTeamInput];
+            inputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addBtn.click();
+                    }
+                });
+            });
+            
+            // 初始化完成后显示欢迎信息
+            setTimeout(() => {
+                if (matches.length === 0) {
+                    showNotification('欢迎使用比赛信息录入系统！请填写表单添加第一场比赛。', 'info');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
