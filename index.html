@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的工具箱 | Tool Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tool-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tool-card:hover { transform: translateY(-6px); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 py-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <h1 class="text-2xl font-bold text-gray-800 flex items-center">
+                <span class="mr-2">🛠️</span> 我的个人工具箱
+            </h1>
+            <div class="relative w-full md:w-80">
+                <input type="text" id="searchInput" placeholder="搜索工具名称或描述..." 
+                    class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all">
+                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-10">
+        <div id="toolGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="animate-pulse bg-gray-200 rounded-2xl h-40"></div>
+            <div class="animate-pulse bg-gray-200 rounded-2xl h-40"></div>
+            <div class="animate-pulse bg-gray-200 rounded-2xl h-40"></div>
+        </div>
+
+        <div id="emptyState" class="hidden text-center py-20">
+            <p class="text-gray-400 text-lg">未找到匹配的工具</p>
+        </div>
+    </main>
+
+    <script>
+        let allTools = [];
+        const grid = document.getElementById('toolGrid');
+        const searchInput = document.getElementById('searchInput');
+        const emptyState = document.getElementById('emptyState');
+
+        // 获取并初始化数据
+        async function fetchTools() {
+            try {
+                const response = await fetch('tools.json');
+                allTools = await response.json();
+                renderTools(allTools);
+            } catch (err) {
+                grid.innerHTML = `<p class="text-red-500 col-span-full text-center">加载失败: 请确保 tools.json 文件存在且格式正确。</p>`;
+            }
+        }
+
+        // 渲染卡片
+        function renderTools(tools) {
+            grid.innerHTML = '';
+            if (tools.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            }
+            emptyState.classList.add('hidden');
+            
+            tools.forEach(tool => {
+                const card = document.createElement('a');
+                card.href = tool.path;
+                card.className = 'tool-card group bg-white p-6 rounded-2xl shadow-md hover:shadow-xl border border-gray-100 flex flex-col h-full transition-all';
+                card.innerHTML = `
+                    <div class="flex-grow">
+                        <h3 class="text-lg font-bold text-gray-800 group-hover:text-blue-600 transition-colors mb-2">${tool.name}</h3>
+                        <p class="text-gray-500 text-sm leading-relaxed">${tool.desc || '暂无详细描述。'}</p>
+                    </div>
+                    <div class="mt-4 flex items-center text-blue-500 text-sm font-semibold">
+                        打开工具 <span class="ml-1 group-hover:translate-x-1 transition-transform">→</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 搜索过滤逻辑
+        searchInput.addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const filtered = allTools.filter(t => 
+                t.name.toLowerCase().includes(val) || 
+                (t.desc && t.desc.toLowerCase().includes(val))
+            );
+            renderTools(filtered);
+        });
+
+        fetchTools();
+    </script>
+</body>
+</html>
