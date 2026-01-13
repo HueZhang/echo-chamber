@@ -59,7 +59,7 @@
         grid.innerHTML = '';
         // 核心逻辑：过滤掉 isHidden 为 true 的项目
         const visibleTools = tools.filter(tool => tool.isHidden !== true);
-
+		console.log(visibleTools);
         if (visibleTools.length === 0) {
             emptyState.classList.remove('hidden');
             return;
