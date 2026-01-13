@@ -51,6 +51,7 @@
             // 初始过滤掉隐藏项目
             renderTools(allTools);
         } catch (err) {
+			console.log(err);
             grid.innerHTML = `<p class="text-red-500 col-span-full text-center">加载失败: 请检查 JSON 格式。</p>`;
         }
     }
