@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纯前端 EPUB 转 PDF 工具</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        /* 加载动画样式 */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-8 font-sans">
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-lg">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">📚 EPUB 转 PDF 转换器</h1>
+            <p class="text-sm text-gray-500 bg-yellow-50 p-3 rounded-lg border border-yellow-200 inline-block text-left">
+                <span class="font-bold">⚠️ 技术说明：</span><br>
+                这是一个纯浏览器端的转换工具。为了性能和稳定性，它主要提取文本内容。复杂的 CSS 布局、图片排版和自定义字体可能会在转换后的 PDF 中丢失。适用于文字为主的书籍。
+            </p>
+        </header>
+
+        <div class="space-y-6">
+            <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-blue-500 transition-colors bg-gray-50" id="dropZone">
+                <input type="file" id="fileInput" accept=".epub" class="hidden">
+                <label for="fileInput" class="cursor-pointer flex flex-col items-center justify-center">
+                    <svg class="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                    </svg>
+                    <span class="text-gray-600 font-medium">点击选择或拖拽 EPUB 文件至此</span>
+                    <span class="text-sm text-gray-400 mt-1" id="fileNameDisplay"></span>
+                </label>
+            </div>
+
+            <button id="convertBtn" disabled class="w-full py-4 bg-blue-600 text-white rounded-xl font-bold text-lg shadow-md hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed flex justify-center items-center">
+                开始转换
+            </button>
+
+            <div id="statusArea" class="hidden mt-6 p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <div class="flex items-center mb-3">
+                    <div class="loader mr-3" id="loadingSpinner"></div>
+                    <h3 class="font-semibold text-blue-800" id="statusTitle">正在处理...</h3>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700 mb-2">
+                    <div class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%" id="progressBar"></div>
+                </div>
+                <p class="text-sm text-blue-600" id="statusText">准备中...</p>
+                <div id="logArea" class="mt-4 p-3 bg-gray-800 text-green-400 font-mono text-xs rounded-lg h-32 overflow-y-auto hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 确保 jsPDF 正确加载
+        const { jsPDF } = window.jspdf;
+
+        const fileInput = document.getElementById('fileInput');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const convertBtn = document.getElementById('convertBtn');
+        const statusArea = document.getElementById('statusArea');
+        const statusTitle = document.getElementById('statusTitle');
+        const statusText = document.getElementById('statusText');
+        const progressBar = document.getElementById('progressBar');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const logArea = document.getElementById('logArea');
+
+        let selectedFile = null;
+        let pdfDoc = null;
+
+        // --- UI 交互逻辑 ---
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files[0]) {
+                selectedFile = e.target.files[0];
+                fileNameDisplay.textContent = `已选择: ${selectedFile.name}`;
+                convertBtn.disabled = false;
+                resetStatus();
+            }
+        });
+
+        // 拖拽支持
+        const dropZone = document.getElementById('dropZone');
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+        });
+        function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+        dropZone.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files[0] && files[0].name.endsWith('.epub')) {
+                fileInput.files = files;
+                selectedFile = files[0];
+                fileNameDisplay.textContent = `已选择: ${selectedFile.name}`;
+                convertBtn.disabled = false;
+                resetStatus();
+            } else {
+                alert('请放入 .epub 文件');
+            }
+        });
+
+        convertBtn.addEventListener('click', startConversion);
+
+        
+		// --- 核心转换逻辑（深度修复版） ---
+
+async function startConversion() {
+    if (!selectedFile) return;
+    
+    convertBtn.disabled = true;
+    statusArea.classList.remove('hidden');
+    loadingSpinner.classList.remove('hidden');
+    statusTitle.textContent = "正在提取文本内容...";
+    logArea.classList.remove('hidden');
+    logArea.innerHTML = '';
+
+    try {
+        pdfDoc = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4' });
+        const reader = new FileReader();
+
+        reader.onload = async function(e) {
+            const book = ePub(e.target.result);
+            await book.ready;
+            
+            const sections = book.spine.spineItems;
+            const totalItems = sections.length;
+            log(`成功加载 EPUB，共 ${totalItems} 个内容块。`);
+
+            let isFirstPage = true;
+
+            for (let i = 0; i < totalItems; i++) {
+                const section = sections[i];
+                updateProgress(10 + Math.round((i / totalItems) * 85), `处理进度: ${i + 1}/${totalItems}`);
+
+                try {
+                    // 加载章节内容
+                    const content = await section.load(book.load.bind(book));
+                    
+                    // --- 修复逻辑：智能提取文本 ---
+                    let cleanText = "";
+                    
+                    if (typeof content === 'string') {
+                        // 如果是字符串，解析它
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(content, "text/html");
+                        cleanText = doc.body.innerText || doc.body.textContent || "";
+                    } else if (content instanceof Document) {
+                        // 如果直接是 Document 对象
+                        cleanText = content.body.innerText || content.body.textContent || "";
+                    } else if (content instanceof HTMLElement) {
+                        // 如果是 HTML 节点
+                        cleanText = content.innerText || content.textContent || "";
+                    }
+
+                    // 清理多余空格和换行
+                    cleanText = cleanText.replace(/\s+/g, ' ').trim();
+
+                    if (cleanText.length > 5) { // 过滤掉只有几个字符的无效片段
+                        if (!isFirstPage) pdfDoc.addPage();
+
+                        // 尝试获取章节名
+                        const chapterTitle = findChapterTitle(section, book.navigation);
+                        let currentY = 20;
+
+                        if (chapterTitle) {
+                            pdfDoc.setFont(undefined, 'bold');
+                            const titleLines = pdfDoc.splitTextToSize(chapterTitle, 180);
+                            pdfDoc.text(titleLines, 15, currentY);
+                            currentY += (titleLines.length * 8) + 5;
+                            pdfDoc.setFont(undefined, 'normal');
+                        }
+
+                        // 写入 PDF
+                        writeMultiPageText(pdfDoc, cleanText, 15, currentY);
+                        isFirstPage = false;
+                        
+                        if ((i + 1) % 20 === 0) log(`已处理至 ${i + 1} 章...`);
+                    }
+                } catch (chapterErr) {
+                    console.warn(`章节 ${i} 处理异常:`, chapterErr);
+                }
+
+                // 防死锁
+                if (i % 15 === 0) await new Promise(r => setTimeout(r, 5));
+            }
+
+            log("正在生成最终文件...");
+            const outputName = selectedFile.name.replace(/\.epub$/i, '.pdf');
+            pdfDoc.save(outputName);
+            
+            statusTitle.textContent = "转换完成！";
+            loadingSpinner.classList.add('hidden');
+            convertBtn.disabled = false;
+        };
+        reader.readAsArrayBuffer(selectedFile);
+
+    } catch (err) {
+        log(`致命错误: ${err.message}`, true);
+        convertBtn.disabled = false;
+    }
+}
+		
+		
+        // --- 辅助函数 ---
+
+        function updateProgress(percent, text) {
+            progressBar.style.width = `${percent}%`;
+            statusText.textContent = text;
+        }
+
+        function resetStatus() {
+            statusArea.classList.add('hidden');
+            progressBar.style.width = '0%';
+            statusTitle.classList.remove('text-red-600');
+            statusTitle.textContent = '正在处理...';
+            logArea.innerHTML = '';
+        }
+
+        function log(msg, isError = false) {
+            const p = document.createElement('p');
+            p.textContent = `> ${msg}`;
+            if (isError) p.style.color = '#ef4444';
+            logArea.appendChild(p);
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+
+        // 尝试在导航目录中查找章节标题
+        function findChapterTitle(item, navigation) {
+            if (!navigation || !navigation.toc) return null;
+            
+            // 递归查找目录树
+            function searchToc(tocItems) {
+                for (const tocItem of tocItems) {
+                    // 检查 href 是否匹配当前 spine item 的 href
+                    // 需要处理 href 中可能带有的锚点 (例如 chapter1.html#section2)
+                    const tocHrefClean = tocItem.href.split('#')[0];
+                    const itemHrefClean = item.href.split('#')[0];
+
+                    if (tocHrefClean === itemHrefClean) {
+                        return tocItem.label.trim();
+                    }
+                    if (tocItem.subitems && tocItem.subitems.length > 0) {
+                        const found = searchToc(tocItem.subitems);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            }
+            return searchToc(navigation.toc);
+        }
+
+        // 核心难题解决：将长文本写入 PDF 并自动分页
+        function writeMultiPageText(doc, text, x, y) {
+            const lineHeight = 7; // 行高 mm
+            const pageHeight = doc.internal.pageSize.height; // A4 高度通常是 297mm
+            const margin = 20; // 底部边距
+            const maxLineWidth = 190; // A4 宽度 210 - 左右边距 10*2
+
+            // jsPDF 的核心方法：将长文本拆分为适应宽度的行数组
+            const splitText = doc.splitTextToSize(text, maxLineWidth);
+
+            let cursorY = y;
+
+            for (let i = 0; i < splitText.length; i++) {
+                // 检查是否需要分页
+                if (cursorY + lineHeight > pageHeight - margin) {
+                    doc.addPage();
+                    cursorY = 20; // 新页面的起始 Y 坐标
+                }
+                doc.text(splitText[i], x, cursorY);
+                cursorY += lineHeight;
+            }
+        }
+
+    </script>
+</body>
+</html>

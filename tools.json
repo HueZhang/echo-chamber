@@ -6,10 +6,22 @@
 	"isHidden": false
   },
   {
-    "name": "新年倒计时",
-    "path": "newyear.html",
-    "desc": "新年倒计时",
+    "name": "ffmpeg命令生成",
+    "path": "ffmpeg.html",
+    "desc": "ffmpeg命令生成",
 	"isHidden": false
+  },
+  {
+    "name": "ffmpeg命令生成",
+    "path": "ffmpeg.html",
+    "desc": "ffmpeg命令生成",
+	"isHidden": false
+  },
+  {
+    "name": "格式转换",
+    "path": "convert.html",
+    "desc": "格式转换",
+	"isHidden": true
   },
   {
     "name": "圣诞快乐",
