@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFmpeg 命令生成器</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .option-card { transition: all 0.2s; border: 2px solid transparent; }
+        .option-card.active { border-color: #3b82f6; background-color: #eff6ff; }
+        code { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-20">
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <a href="index.html" class="text-blue-600 hover:underline mb-6 inline-block">← 返回工具箱</a>
+        
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">🎬 FFmpeg 命令生成器</h1>
+            <p class="text-gray-500 mt-2">可视化配置常用 FFmpeg 参数，告别记不住指令的烦恼。</p>
+        </header>
+
+        <section class="bg-white p-6 rounded-2xl shadow-sm mb-6">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2 text-sm">1</span>
+                基础文件设置
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">输入文件名</label>
+                    <input type="text" id="inputName" value="input" 
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">输出文件名</label>
+                    <input type="text" id="outputName" value="output" 
+                        class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-2xl shadow-sm mb-6">
+            <h2 class="text-lg font-semibold mb-4 flex items-center">
+                <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mr-2 text-sm">2</span>
+                选择操作任务
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="taskGrid">
+                <button onclick="setTask('convert')" class="option-card p-3 rounded-xl bg-gray-50 text-sm font-medium hover:bg-gray-100 active" data-task="convert">🔄 格式转换</button>
+                <button onclick="setTask('trim')" class="option-card p-3 rounded-xl bg-gray-50 text-sm font-medium hover:bg-gray-100" data-task="trim">✂️ 视频剪切</button>
+                <button onclick="setTask('compress')" class="option-card p-3 rounded-xl bg-gray-50 text-sm font-medium hover:bg-gray-100" data-task="compress">📉 压缩大小</button>
+                <button onclick="setTask('audio')" class="option-card p-3 rounded-xl bg-gray-50 text-sm font-medium hover:bg-gray-100" data-task="audio">🎵 提取音频</button>
+                <button onclick="setTask('gif')" class="option-card p-3 rounded-xl bg-gray-50 text-sm font-medium hover:bg-gray-100" data-task="gif">🖼️ 转为 GIF</button>
+                <button onclick="setTask('scale')" class="option-card p-3 rounded-xl bg-gray-50 text-sm font-medium hover:bg-gray-100" data-task="scale">📏 修改分辨率</button>
+            </div>
+
+            <div id="paramsArea" class="mt-6 p-4 bg-blue-50 rounded-xl hidden">
+                <div id="paramFields" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    </div>
+            </div>
+        </section>
+
+        <section class="fixed bottom-0 left-0 right-0 md:relative md:bottom-auto bg-gray-900 md:rounded-2xl p-6 shadow-2xl overflow-hidden">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-gray-400 text-xs uppercase tracking-widest font-bold">Generated Command</span>
+                <button onclick="copyCommand()" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded transition-colors">
+                    复制命令
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <code id="commandOutput" class="text-blue-400 text-sm md:text-base whitespace-nowrap">ffmpeg -i input.mp4 output.mp4</code>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const inputName = document.getElementById('inputName');
+        const outputName = document.getElementById('outputName');
+        const commandOutput = document.getElementById('commandOutput');
+        const paramsArea = document.getElementById('paramsArea');
+        const paramFields = document.getElementById('paramFields');
+        
+        let currentTask = 'convert';
+        const params = {};
+
+        const taskConfigs = {
+            convert: {
+                fields: [
+                    { id: 'inExt', label: '输入格式', type: 'text', default: 'mp4' },
+                    { id: 'outExt', label: '输出格式', type: 'text', default: 'mkv' }
+                ],
+                cmd: () => `ffmpeg -i ${inputName.value}.${params.inExt} ${outputName.value}.${params.outExt}`
+            },
+            trim: {
+                fields: [
+                    { id: 'start', label: '开始时间 (00:00:00)', type: 'text', default: '00:00:00' },
+                    { id: 'duration', label: '持续秒数', type: 'number', default: '10' }
+                ],
+                cmd: () => `ffmpeg -ss ${params.start} -i ${inputName.value}.mp4 -t ${params.duration} -c copy ${outputName.value}.mp4`
+            },
+            compress: {
+                fields: [
+                    { id: 'crf', label: '质量系数 (CRF 0-51, 23默认)', type: 'number', default: '28' }
+                ],
+                cmd: () => `ffmpeg -i ${inputName.value}.mp4 -vcodec libx264 -crf ${params.crf} ${outputName.value}.mp4`
+            },
+            audio: {
+                fields: [
+                    { id: 'format', label: '音频格式', type: 'text', default: 'mp3' }
+                ],
+                cmd: () => `ffmpeg -i ${inputName.value}.mp4 -vn -acodec libmp3lame ${outputName.value}.${params.format}`
+            },
+            gif: {
+                fields: [
+                    { id: 'fps', label: '帧率', type: 'number', default: '10' },
+                    { id: 'width', label: '宽度 (像素)', type: 'number', default: '320' }
+                ],
+                cmd: () => `ffmpeg -i ${inputName.value}.mp4 -vf "fps=${params.fps},scale=${params.width}:-1:flags=lanczos" ${outputName.value}.gif`
+            },
+            scale: {
+                fields: [
+                    { id: 'res', label: '目标分辨率 (如 1280x720)', type: 'text', default: '1920x1080' }
+                ],
+                cmd: () => `ffmpeg -i ${inputName.value}.mp4 -s ${params.res} -c:a copy ${outputName.value}.mp4`
+            }
+        };
+
+        function setTask(taskKey) {
+            currentTask = taskKey;
+            // 更新 UI 状态
+            document.querySelectorAll('.option-card').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.task === taskKey);
+            });
+
+            // 生成参数输入框
+            const config = taskConfigs[taskKey];
+            paramFields.innerHTML = '';
+            paramsArea.classList.toggle('hidden', !config.fields.length);
+
+            config.fields.forEach(f => {
+                params[f.id] = f.default;
+                const div = document.createElement('div');
+                div.innerHTML = `
+                    <label class="block text-xs font-semibold text-blue-800 mb-1">${f.label}</label>
+                    <input type="${f.type}" oninput="updateParam('${f.id}', this.value)" value="${f.default}"
+                        class="w-full px-3 py-1.5 border border-blue-200 rounded-md outline-none focus:border-blue-500 text-sm">
+                `;
+                paramFields.appendChild(div);
+            });
+            updateCommand();
+        }
+
+        function updateParam(id, val) {
+            params[id] = val;
+            updateCommand();
+        }
+
+        function updateCommand() {
+            commandOutput.innerText = taskConfigs[currentTask].cmd();
+        }
+
+        function copyCommand() {
+            navigator.clipboard.writeText(commandOutput.innerText);
+            const btn = event.target;
+            const originalText = btn.innerText;
+            btn.innerText = '已复制！';
+            setTimeout(() => btn.innerText = originalText, 2000);
+        }
+
+        // 初始化
+        inputName.addEventListener('input', updateCommand);
+        outputName.addEventListener('input', updateCommand);
+        setTask('convert');
+    </script>
+</body>
+</html>
