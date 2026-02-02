@@ -12,6 +12,12 @@
 	"isHidden": false
   },
   {
+    "name": "贷款计算",
+    "path": "fxxk-sales.html",
+    "desc": "别被傻逼销售坑了",
+	"isHidden": false
+  },
+  {
     "name": "格式转换",
     "path": "convert.html",
     "desc": "格式转换",
