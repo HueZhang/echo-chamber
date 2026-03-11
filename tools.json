@@ -12,6 +12,12 @@
 	"isHidden": false
   },
   {
+    "name": "简单转换",
+    "path": "converttxt.html",
+    "desc": "简单转换",
+	"isHidden": false
+  },
+  {
     "name": "ffmpeg命令生成",
     "path": "ffmpeg.html",
     "desc": "ffmpeg命令生成",
