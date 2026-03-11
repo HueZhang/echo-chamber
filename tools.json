@@ -6,6 +6,12 @@
 	"isHidden": false
   },
   {
+    "name": "获取今日投注比赛",
+    "path": "getmatch.html",
+    "desc": "获取今日投注比赛",
+	"isHidden": false
+  },
+  {
     "name": "ffmpeg命令生成",
     "path": "ffmpeg.html",
     "desc": "ffmpeg命令生成",
