@@ -6,12 +6,6 @@
 	"isHidden": false
   },
   {
-    "name": "获取今日投注比赛",
-    "path": "getmatch.html",
-    "desc": "获取今日投注比赛",
-	"isHidden": false
-  },
-  {
     "name": "简单转换",
     "path": "converttxt.html",
     "desc": "简单转换",
