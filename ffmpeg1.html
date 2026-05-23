@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FFmpeg 命令构建器</title>
+  <style>
+    :root {
+      --bg: #f5f5f5;
+      --bg-card: #ffffff;
+      --text: #1a1a1a;
+      --text-secondary: #666;
+      --border: #e0e0e0;
+      --primary: #4a90d9;
+      --primary-hover: #357abd;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --danger: #f44336;
+      --radius: 8px;
+      --shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    [data-theme="dark"] {
+      --bg: #1a1a2e;
+      --bg-card: #16213e;
+      --text: #e0e0e0;
+      --text-secondary: #999;
+      --border: #2a2a4a;
+      --primary: #5dade2;
+      --primary-hover: #3498db;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    #app {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    #theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+
+    #step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    #step-indicator::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--border);
+      z-index: 0;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--bg-card);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+    }
+
+    .step.active .step-num {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+
+    .step.completed .step-num {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    .step-label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .step.active .step-label {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    #step-content {
+      flex: 1;
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+
+    .step-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .step-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .op-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .op-card {
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .op-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .op-card.selected {
+      border-color: var(--primary);
+      background: color-mix(in srgb, var(--primary) 10%, var(--bg-card));
+    }
+
+    .op-card .icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .op-card .title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .op-card .desc {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 20%, transparent);
+    }
+
+    .form-group .hint {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .range-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .range-group input[type="range"] {
+      flex: 1;
+    }
+
+    .range-group .range-value {
+      min-width: 40px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    #command-bar {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .command-preview {
+      margin-bottom: 12px;
+    }
+
+    .command-preview label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    #command-output {
+      display: block;
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 12px 16px;
+      border-radius: var(--radius);
+      font-family: "Cascadia Code", "Fira Code", "Consolas", monospace;
+      font-size: 0.85rem;
+      word-break: break-all;
+      white-space: pre-wrap;
+      line-height: 1.5;
+    }
+
+    .command-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .command-actions button {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .command-actions button:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    #nav-buttons {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    #nav-buttons button {
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    #btn-prev {
+      background: var(--bg);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    #btn-prev:hover:not(:disabled) {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    #btn-prev:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    #btn-next {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    #btn-next:hover {
+      background: var(--primary-hover);
+    }
+
+    .additional-options {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .additional-options summary {
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text-secondary);
+      padding: 8px 0;
+    }
+
+    .additional-options summary:hover {
+      color: var(--primary);
+    }
+
+    .params-section {
+      animation: fadeIn 0.3s ease;
+    }
+
+    .step-desc {
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+    }
+
+    .presets-section, .history-section {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .presets-section h3, .history-section h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+    }
+
+    .preset-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .preset-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--bg);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+
+    .preset-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    #btn-clear-history {
+      background: none;
+      border: 1px solid var(--danger);
+      color: var(--danger);
+      padding: 4px 12px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .history-item {
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .history-item:hover {
+      border-color: var(--primary);
+    }
+
+    .history-item .history-time {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .history-item .history-cmd {
+      font-family: monospace;
+      font-size: 0.8rem;
+      margin-top: 4px;
+      word-break: break-all;
+      white-space: pre-wrap;
+    }
+
+    .history-item .history-type {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      background: color-mix(in srgb, var(--primary) 15%, var(--bg-card));
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .empty-hint {
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #command-breakdown .breakdown-item {
+      padding: 8px 12px;
+      border-left: 3px solid var(--primary);
+      margin-bottom: 8px;
+      background: var(--bg);
+      border-radius: 0 var(--radius) var(--radius) 0;
+    }
+
+    #command-breakdown .breakdown-flag {
+      font-family: monospace;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    #command-breakdown .breakdown-desc {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--success);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      animation: slideUp 0.3s ease, fadeOut 0.3s ease 1.7s;
+      z-index: 100;
+    }
+
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    .help-tip {
+      position: relative;
+      display: inline-block;
+      cursor: help;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      margin-left: 4px;
+    }
+
+    .help-tip .tip-text {
+      visibility: hidden;
+      width: 220px;
+      background: var(--text);
+      color: var(--bg);
+      text-align: center;
+      border-radius: var(--radius);
+      padding: 8px;
+      position: absolute;
+      z-index: 10;
+      bottom: 125%;
+      left: 50%;
+      margin-left: -110px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      font-size: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .help-tip:hover .tip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .op-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .step-label {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header>
+      <h1>FFmpeg 命令构建器</h1>
+      <button id="theme-toggle" title="切换主题">🌙</button>
+    </header>
+
+    <nav id="step-indicator">
+      <div class="step active" data-step="1">
+        <span class="step-num">1</span>
+        <span class="step-label">选择操作</span>
+      </div>
+      <div class="step" data-step="2">
+        <span class="step-num">2</span>
+        <span class="step-label">输入输出</span>
+      </div>
+      <div class="step" data-step="3">
+        <span class="step-num">3</span>
+        <span class="step-label">参数配置</span>
+      </div>
+      <div class="step" data-step="4">
+        <span class="step-num">4</span>
+        <span class="step-label">预览复制</span>
+      </div>
+    </nav>
+
+    <main id="step-content">
+      <!-- Step 1: Operation Type -->
+      <div id="step-1" class="step-panel active">
+        <h2>选择操作类型</h2>
+        <p class="step-desc">请选择你想要执行的 FFmpeg 操作</p>
+        <div class="op-cards">
+          <div class="op-card" data-op="convert">
+            <div class="icon">🔄</div>
+            <div class="title">格式转换</div>
+            <div class="desc">MP4、MKV、AVI、WebM 等格式互转</div>
+          </div>
+          <div class="op-card" data-op="compress">
+            <div class="icon">📦</div>
+            <div class="title">压缩 / 编码</div>
+            <div class="desc">调整分辨率、码率、编码器</div>
+          </div>
+          <div class="op-card" data-op="audio">
+            <div class="icon">🎵</div>
+            <div class="title">音频处理</div>
+            <div class="desc">提取音轨、转换格式、调整音量</div>
+          </div>
+          <div class="op-card" data-op="edit">
+            <div class="icon">✂️</div>
+            <div class="title">视频剪辑</div>
+            <div class="desc">裁剪、合并、水印、字幕</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: Input/Output -->
+      <div id="step-2" class="step-panel">
+        <h2>输入 / 输出配置</h2>
+        <p class="step-desc">配置输入文件路径和输出格式</p>
+        <div class="form-group">
+          <label for="input-file">输入文件路径</label>
+          <input type="text" id="input-file" placeholder="例如: C:\Videos\input.mp4 或 /home/user/video.mkv">
+          <div class="hint">支持本地文件路径</div>
+        </div>
+        <div class="form-group">
+          <label for="output-format">输出格式</label>
+          <select id="output-format">
+            <option value="mp4">MP4</option>
+            <option value="mkv">MKV</option>
+            <option value="avi">AVI</option>
+            <option value="webm">WebM</option>
+            <option value="mov">MOV</option>
+            <option value="mp3">MP3</option>
+            <option value="wav">WAV</option>
+            <option value="aac">AAC</option>
+            <option value="gif">GIF</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="output-file">输出文件路径</label>
+          <input type="text" id="output-file" placeholder="自动生成，也可手动修改">
+          <div class="hint">根据输入路径和输出格式自动生成</div>
+        </div>
+      </div>
+
+      <!-- Step 3: Parameters -->
+      <div id="step-3" class="step-panel">
+        <h2>参数配置</h2>
+        <p class="step-desc">根据操作类型配置具体参数</p>
+
+        <!-- Format Conversion -->
+        <div id="params-convert" class="params-section" style="display:none">
+          <div class="form-group">
+            <label>视频编码</label>
+            <select id="p-convert-vcodec">
+              <option value="copy">复制（不重新编码）</option>
+              <option value="h264">H.264 (libx264)</option>
+              <option value="h265">H.265 (libx265)</option>
+              <option value="vp9">VP9 (libvpx-vp9)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>音频编码</label>
+            <select id="p-convert-acodec">
+              <option value="copy">复制（不重新编码）</option>
+              <option value="aac">AAC</option>
+              <option value="mp3">MP3</option>
+              <option value="opus">Opus</option>
+            </select>
+          </div>
+          <div class="form-group" id="convert-preset-group" style="display:none">
+            <label>编码预设</label>
+            <select id="p-convert-preset">
+              <option value="ultrafast">ultrafast（最快，文件大）</option>
+              <option value="fast">fast</option>
+              <option value="medium" selected>medium（推荐）</option>
+              <option value="slow">slow</option>
+              <option value="veryslow">veryslow（最慢，文件小）</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Video Compression -->
+        <div id="params-compress" class="params-section" style="display:none">
+          <div class="form-group">
+            <label>视频编码</label>
+            <select id="p-comp-vcodec">
+              <option value="h264">H.264 (libx264)</option>
+              <option value="h265">H.265 (libx265)</option>
+              <option value="vp9">VP9 (libvpx-vp9)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>分辨率</label>
+            <select id="p-comp-resolution">
+              <option value="original">原始分辨率</option>
+              <option value="4k">4K (3840x2160)</option>
+              <option value="1080p">1080p (1920x1080)</option>
+              <option value="720p">720p (1280x720)</option>
+              <option value="480p">480p (854x480)</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="form-group" id="comp-custom-res-group" style="display:none">
+            <label>自定义分辨率</label>
+            <input type="text" id="p-comp-custom-res" placeholder="例如: 1280x720">
+          </div>
+          <div class="form-group">
+            <label>质量模式</label>
+            <select id="p-comp-qmode">
+              <option value="crf">CRF（恒定质量，推荐）</option>
+              <option value="cbr">CBR（恒定码率）</option>
+            </select>
+          </div>
+          <div class="form-group" id="comp-crf-group">
+            <label>CRF 值：<span id="comp-crf-val">23</span></label>
+            <div class="range-group">
+              <span>高质量</span>
+              <input type="range" id="p-comp-crf" min="0" max="51" value="23">
+              <span>小文件</span>
+            </div>
+            <div class="hint">0 = 无损，18 = 高质量，23 = 默认，28 = 小文件</div>
+          </div>
+          <div class="form-group" id="comp-bitrate-group" style="display:none">
+            <label>视频码率</label>
+            <input type="text" id="p-comp-bitrate" placeholder="例如: 2M, 5000k">
+          </div>
+          <div class="form-group">
+            <label>帧率</label>
+            <select id="p-comp-fps">
+              <option value="original">原始帧率</option>
+              <option value="24">24 fps</option>
+              <option value="30">30 fps</option>
+              <option value="60">60 fps</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="form-group" id="comp-custom-fps-group" style="display:none">
+            <label>自定义帧率</label>
+            <input type="number" id="p-comp-custom-fps" placeholder="例如: 25">
+          </div>
+          <div class="form-group">
+            <label>编码预设</label>
+            <select id="p-comp-preset">
+              <option value="ultrafast">ultrafast（最快）</option>
+              <option value="fast">fast</option>
+              <option value="medium" selected>medium（推荐）</option>
+              <option value="slow">slow</option>
+              <option value="veryslow">veryslow（最慢，最小）</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>硬件加速</label>
+            <select id="p-comp-hwaccel">
+              <option value="none">不使用</option>
+              <option value="nvenc">NVIDIA NVENC</option>
+              <option value="qsv">Intel QSV</option>
+              <option value="amf">AMD AMF</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Audio Processing -->
+        <div id="params-audio" class="params-section" style="display:none">
+          <div class="form-group">
+            <label>音频编码</label>
+            <select id="p-audio-codec">
+              <option value="aac">AAC</option>
+              <option value="mp3">MP3</option>
+              <option value="opus">Opus</option>
+              <option value="flac">FLAC（无损）</option>
+              <option value="wav">WAV（无损）</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>音频码率</label>
+            <select id="p-audio-bitrate-select">
+              <option value="128k">128 kbps</option>
+              <option value="192k" selected>192 kbps</option>
+              <option value="256k">256 kbps</option>
+              <option value="320k">320 kbps</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="form-group" id="audio-custom-bitrate-group" style="display:none">
+            <input type="text" id="p-audio-custom-bitrate" placeholder="例如: 192k">
+          </div>
+          <div class="form-group">
+            <label>采样率</label>
+            <select id="p-audio-samplerate">
+              <option value="44100">44100 Hz</option>
+              <option value="48000">48000 Hz</option>
+              <option value="custom">自定义</option>
+            </select>
+          </div>
+          <div class="form-group" id="audio-custom-sr-group" style="display:none">
+            <input type="number" id="p-audio-custom-sr" placeholder="例如: 44100">
+          </div>
+          <div class="form-group">
+            <label>声道</label>
+            <select id="p-audio-channels">
+              <option value="stereo">立体声</option>
+              <option value="mono">单声道</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>音量调整：<span id="audio-vol-val">100%</span></label>
+            <div class="range-group">
+              <span>静音</span>
+              <input type="range" id="p-audio-volume" min="0" max="200" value="100">
+              <span>2倍</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Editing -->
+        <div id="params-edit" class="params-section" style="display:none">
+          <div class="form-group">
+            <label>裁剪起始时间</label>
+            <input type="text" id="p-edit-trim-start" placeholder="HH:MM:SS 或秒数，如 00:01:30 或 90">
+          </div>
+          <div class="form-group">
+            <label>裁剪结束时间</label>
+            <input type="text" id="p-edit-trim-end" placeholder="HH:MM:SS 或秒数">
+          </div>
+          <div class="form-group">
+            <label>合并模式（多文件）</label>
+            <textarea id="p-edit-merge" rows="4" placeholder="每行一个文件路径：&#10;file1.mp4&#10;file2.mp4&#10;file3.mp4"></textarea>
+            <div class="hint">输入多个文件路径将生成 concat 合并命令</div>
+          </div>
+          <div class="form-group">
+            <label>水印图片路径</label>
+            <input type="text" id="p-edit-watermark" placeholder="例如: logo.png">
+          </div>
+          <div class="form-group" id="edit-watermark-pos-group" style="display:none">
+            <label>水印位置</label>
+            <select id="p-edit-watermark-pos">
+              <option value="top-left">左上角</option>
+              <option value="top-right">右上角</option>
+              <option value="bottom-left">左下角</option>
+              <option value="bottom-right">右下角</option>
+              <option value="center">居中</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>字幕文件路径</label>
+            <input type="text" id="p-edit-subtitle" placeholder="例如: subtitle.srt">
+          </div>
+        </div>
+
+        <!-- Additional Options -->
+        <details class="additional-options">
+          <summary>附加选项</summary>
+          <div class="form-group">
+            <label><input type="checkbox" id="p-overwrite"> 覆盖输出文件 (-y)</label>
+          </div>
+          <div class="form-group">
+            <label><input type="checkbox" id="p-verbose"> 详细日志 (-v verbose)</label>
+          </div>
+          <div class="form-group">
+            <label>自定义附加参数</label>
+            <input type="text" id="p-custom-flags" placeholder="例如: -movflags +faststart">
+          </div>
+        </details>
+      </div>
+
+      <!-- Step 4: Preview -->
+      <div id="step-4" class="step-panel">
+        <h2>命令预览</h2>
+        <p class="step-desc">确认生成的 FFmpeg 命令，查看参数说明</p>
+        <div id="command-breakdown"></div>
+
+        <div class="presets-section">
+          <h3>快速预设</h3>
+          <div class="preset-cards">
+            <button class="preset-btn" data-preset="web-mp4">Web 优化 MP4</button>
+            <button class="preset-btn" data-preset="hq-archive">高质量归档</button>
+            <button class="preset-btn" data-preset="small-size">小文件体积</button>
+            <button class="preset-btn" data-preset="extract-mp3">提取音频 MP3</button>
+            <button class="preset-btn" data-preset="to-gif">视频转 GIF</button>
+          </div>
+        </div>
+
+        <div class="history-section">
+          <div class="history-header">
+            <h3>历史记录</h3>
+            <button id="btn-clear-history">清除</button>
+          </div>
+          <div id="history-list">
+            <p class="empty-hint">暂无历史记录</p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="command-bar">
+      <div class="command-preview">
+        <label>生成的命令：</label>
+        <code id="command-output">ffmpeg -i input.mp4 output.mp4</code>
+      </div>
+      <div class="command-actions">
+        <button id="btn-copy" title="复制命令">📋 复制</button>
+        <button id="btn-save-history" title="保存到历史">💾 保存</button>
+      </div>
+    </footer>
+
+    <div id="nav-buttons">
+      <button id="btn-prev" disabled>← 上一步</button>
+      <button id="btn-next">下一步 →</button>
+    </div>
+  </div>
+
+  <script>
+    // ─── State ───────────────────────────────────────────
+    const state = {
+      currentStep: 1,
+      operation: null,
+      inputFile: '',
+      outputFile: '',
+      outputFormat: 'mp4',
+      params: {},
+    };
+
+    // ─── Command Builder ─────────────────────────────────
+    class CommandBuilder {
+      constructor(state) { this.state = state; }
+
+      build() {
+        if (this.state.params.mergeFiles) return this.buildMergeCommand();
+        if (!this.state.inputFile) return 'ffmpeg -i input.mp4 output.mp4';
+
+        const parts = ['ffmpeg'];
+        const s = this.state;
+        const p = s.params;
+
+        if (p.overwrite) parts.push('-y');
+        parts.push(`-i ${this.esc(s.inputFile)}`);
+
+        switch (s.operation) {
+          case 'convert': this.addConvertFlags(parts, p); break;
+          case 'compress': this.addCompressFlags(parts, p); break;
+          case 'audio': this.addAudioFlags(parts, p); break;
+          case 'edit': this.addEditFlags(parts, p); break;
+        }
+
+        if (p.verbose) parts.push('-v verbose');
+        if (p.customFlags) parts.push(p.customFlags);
+        parts.push(this.esc(s.outputFile || `output.${s.outputFormat}`));
+
+        return parts.join(' ');
+      }
+
+      buildMergeCommand() {
+        const files = this.state.params.mergeFiles.split('\n').filter(f => f.trim());
+        if (files.length === 0) return '# 请输入要合并的文件路径';
+        const listContent = files.map(f => `file '${f.trim()}'`).join('\n');
+        const output = this.state.outputFile || `output.${this.state.outputFormat}`;
+        return `# 1. 创建文件列表 (concat.txt):\n${listContent}\n\n# 2. 执行合并命令:\nffmpeg -f concat -safe 0 -i concat.txt -c copy ${this.esc(output)}`;
+      }
+
+      esc(path) {
+        if (!path) return '';
+        if (/\s/.test(path)) return `"${path}"`;
+        return path;
+      }
+
+      addConvertFlags(parts, p) {
+        if (p.videoCodec === 'copy') { parts.push('-c:v copy'); }
+        else if (p.videoCodec) {
+          parts.push(`-c:v ${this.codecName(p.videoCodec)}`);
+          if (p.preset) parts.push(`-preset ${p.preset}`);
+        }
+        if (p.audioCodec === 'copy') { parts.push('-c:a copy'); }
+        else if (p.audioCodec) { parts.push(`-c:a ${this.codecName(p.audioCodec)}`); }
+      }
+
+      addCompressFlags(parts, p) {
+        if (p.videoCodec) parts.push(`-c:v ${this.codecName(p.videoCodec)}`);
+        if (p.resolution && p.resolution !== 'original') parts.push(`-s ${this.resolutionValue(p.resolution)}`);
+        if (p.qualityMode === 'crf' && p.crf !== undefined) parts.push(`-crf ${p.crf}`);
+        else if (p.qualityMode === 'cbr' && p.bitrate) parts.push(`-b:v ${p.bitrate}`);
+        if (p.framerate && p.framerate !== 'original') parts.push(`-r ${p.framerate}`);
+        if (p.preset) parts.push(`-preset ${p.preset}`);
+        if (p.hwaccel && p.hwaccel !== 'none') parts.push(`-c:v ${this.hwaccelCodec(p.hwaccel)}`);
+      }
+
+      addAudioFlags(parts, p) {
+        parts.push('-vn');
+        if (p.audioCodec) parts.push(`-c:a ${this.codecName(p.audioCodec)}`);
+        if (p.audioBitrate) parts.push(`-b:a ${p.audioBitrate}`);
+        if (p.sampleRate) parts.push(`-ar ${p.sampleRate}`);
+        if (p.channels) parts.push(`-ac ${p.channels === 'mono' ? 1 : 2}`);
+        if (p.volume && p.volume !== 100) parts.push(`-af "volume=${p.volume / 100}"`);
+      }
+
+      addEditFlags(parts, p) {
+        if (p.trimStart) parts.push(`-ss ${p.trimStart}`);
+        if (p.trimEnd) parts.push(`-to ${p.trimEnd}`);
+        if (p.watermarkImage) {
+          const pos = this.watermarkPosition(p.watermarkPosition || 'top-left');
+          parts.push(`-i ${this.esc(p.watermarkImage)}`);
+          parts.push(`-filter_complex "overlay=${pos}"`);
+        }
+        if (p.subtitleFile) parts.push(`-vf "subtitles=${this.esc(p.subtitleFile)}"`);
+      }
+
+      codecName(c) {
+        return {h264:'libx264',h265:'libx265',vp9:'libvpx-vp9',aac:'aac',mp3:'libmp3lame',opus:'libopus',flac:'flac',wav:'pcm_s16le'}[c]||c;
+      }
+      resolutionValue(r) {
+        return {'4k':'3840x2160','1080p':'1920x1080','720p':'1280x720','480p':'854x480'}[r]||r;
+      }
+      hwaccelCodec(h) {
+        return {nvenc:'h264_nvenc',qsv:'h264_qsv',amf:'h264_amf'}[h]||'libx264';
+      }
+      watermarkPosition(p) {
+        return {'top-left':'10:10','top-right':'main_w-overlay_w-10:10','bottom-left':'10:main_h-overlay_h-10','bottom-right':'main_w-overlay_w-10:main_h-overlay_h-10','center':'(main_w-overlay_w)/2:(main_h-overlay_h)/2'}[p]||'10:10';
+      }
+    }
+
+    const builder = new CommandBuilder(state);
+
+    // ─── Wizard Navigation ───────────────────────────────
+    function goToStep(step) {
+      state.currentStep = step;
+      document.querySelectorAll('.step-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`step-${step}`).classList.add('active');
+      document.querySelectorAll('#step-indicator .step').forEach(s => {
+        const n = parseInt(s.dataset.step);
+        s.classList.toggle('active', n === step);
+        s.classList.toggle('completed', n < step);
+      });
+      document.getElementById('btn-prev').disabled = step === 1;
+      document.getElementById('btn-next').textContent = step === 4 ? '完成 ✓' : '下一步 →';
+      if (step === 3) showParamsForOperation(state.operation);
+      if (step === 4) { updateBreakdown(); renderHistory(); }
+      updateCommand();
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => {
+      if (state.currentStep > 1) goToStep(state.currentStep - 1);
+    });
+    document.getElementById('btn-next').addEventListener('click', () => {
+      if (state.currentStep < 4) goToStep(state.currentStep + 1);
+    });
+    document.querySelectorAll('#step-indicator .step').forEach(s => {
+      s.addEventListener('click', () => goToStep(parseInt(s.dataset.step)));
+    });
+
+    function updateCommand() {
+      document.getElementById('command-output').textContent = builder.build();
+    }
+
+    // ─── Theme Toggle ────────────────────────────────────
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      if (document.documentElement.getAttribute('data-theme') === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        document.getElementById('theme-toggle').textContent = '🌙';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('theme-toggle').textContent = '☀️';
+      }
+    });
+
+    // ─── Copy & Save ─────────────────────────────────────
+    document.getElementById('btn-copy').addEventListener('click', () => {
+      navigator.clipboard.writeText(document.getElementById('command-output').textContent).then(() => {
+        const btn = document.getElementById('btn-copy');
+        btn.textContent = '✓ 已复制';
+        setTimeout(() => btn.textContent = '📋 复制', 2000);
+      });
+    });
+
+    // ─── Step 1: Operation Selection ─────────────────────
+    document.querySelectorAll('.op-card').forEach(card => {
+      card.addEventListener('click', () => {
+        document.querySelectorAll('.op-card').forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        state.operation = card.dataset.op;
+        state.params = {};
+        updateCommand();
+      });
+    });
+
+    // ─── Step 2: Input/Output ────────────────────────────
+    const inputEl = document.getElementById('input-file');
+    const outputEl = document.getElementById('output-file');
+    const formatEl = document.getElementById('output-format');
+
+    function autoFillOutput() {
+      const input = inputEl.value.trim();
+      const format = formatEl.value;
+      if (!input) { outputEl.value = ''; return; }
+      outputEl.value = input.replace(/\.[^.\\/]+$/, '') + '.' + format;
+      state.outputFile = outputEl.value;
+      updateCommand();
+    }
+
+    inputEl.addEventListener('input', () => { state.inputFile = inputEl.value.trim(); autoFillOutput(); });
+    formatEl.addEventListener('change', () => { state.outputFormat = formatEl.value; autoFillOutput(); });
+    outputEl.addEventListener('input', () => { state.outputFile = outputEl.value.trim(); updateCommand(); });
+
+    // ─── Step 3: Parameter Panels ────────────────────────
+    function showParamsForOperation(op) {
+      document.querySelectorAll('.params-section').forEach(s => s.style.display = 'none');
+      const el = document.getElementById(`params-${op}`);
+      if (el) el.style.display = 'block';
+    }
+
+    // Format Conversion
+    document.getElementById('p-convert-vcodec').addEventListener('change', e => {
+      state.params.videoCodec = e.target.value;
+      document.getElementById('convert-preset-group').style.display = e.target.value === 'copy' ? 'none' : 'block';
+      updateCommand();
+    });
+    document.getElementById('p-convert-acodec').addEventListener('change', e => { state.params.audioCodec = e.target.value; updateCommand(); });
+    document.getElementById('p-convert-preset').addEventListener('change', e => { state.params.preset = e.target.value; updateCommand(); });
+
+    // Video Compression
+    document.getElementById('p-comp-vcodec').addEventListener('change', e => { state.params.videoCodec = e.target.value; updateCommand(); });
+    document.getElementById('p-comp-resolution').addEventListener('change', e => {
+      state.params.resolution = e.target.value;
+      document.getElementById('comp-custom-res-group').style.display = e.target.value === 'custom' ? 'block' : 'none';
+      updateCommand();
+    });
+    document.getElementById('p-comp-custom-res').addEventListener('input', e => { state.params.resolution = e.target.value; updateCommand(); });
+    document.getElementById('p-comp-qmode').addEventListener('change', e => {
+      state.params.qualityMode = e.target.value;
+      document.getElementById('comp-crf-group').style.display = e.target.value === 'crf' ? 'block' : 'none';
+      document.getElementById('comp-bitrate-group').style.display = e.target.value === 'cbr' ? 'block' : 'none';
+      updateCommand();
+    });
+    document.getElementById('p-comp-crf').addEventListener('input', e => {
+      state.params.crf = e.target.value;
+      document.getElementById('comp-crf-val').textContent = e.target.value;
+      updateCommand();
+    });
+    document.getElementById('p-comp-bitrate').addEventListener('input', e => { state.params.bitrate = e.target.value; updateCommand(); });
+    document.getElementById('p-comp-fps').addEventListener('change', e => {
+      state.params.framerate = e.target.value;
+      document.getElementById('comp-custom-fps-group').style.display = e.target.value === 'custom' ? 'block' : 'none';
+      updateCommand();
+    });
+    document.getElementById('p-comp-custom-fps').addEventListener('input', e => { state.params.framerate = e.target.value; updateCommand(); });
+    document.getElementById('p-comp-preset').addEventListener('change', e => { state.params.preset = e.target.value; updateCommand(); });
+    document.getElementById('p-comp-hwaccel').addEventListener('change', e => { state.params.hwaccel = e.target.value; updateCommand(); });
+
+    // Audio Processing
+    document.getElementById('p-audio-codec').addEventListener('change', e => { state.params.audioCodec = e.target.value; updateCommand(); });
+    document.getElementById('p-audio-bitrate-select').addEventListener('change', e => {
+      document.getElementById('audio-custom-bitrate-group').style.display = e.target.value === 'custom' ? 'block' : 'none';
+      if (e.target.value !== 'custom') { state.params.audioBitrate = e.target.value; updateCommand(); }
+    });
+    document.getElementById('p-audio-custom-bitrate').addEventListener('input', e => { state.params.audioBitrate = e.target.value; updateCommand(); });
+    document.getElementById('p-audio-samplerate').addEventListener('change', e => {
+      document.getElementById('audio-custom-sr-group').style.display = e.target.value === 'custom' ? 'block' : 'none';
+      if (e.target.value !== 'custom') { state.params.sampleRate = e.target.value; updateCommand(); }
+    });
+    document.getElementById('p-audio-custom-sr').addEventListener('input', e => { state.params.sampleRate = e.target.value; updateCommand(); });
+    document.getElementById('p-audio-channels').addEventListener('change', e => { state.params.channels = e.target.value; updateCommand(); });
+    document.getElementById('p-audio-volume').addEventListener('input', e => {
+      state.params.volume = parseInt(e.target.value);
+      document.getElementById('audio-vol-val').textContent = e.target.value + '%';
+      updateCommand();
+    });
+
+    // Video Editing
+    document.getElementById('p-edit-trim-start').addEventListener('input', e => { state.params.trimStart = e.target.value; updateCommand(); });
+    document.getElementById('p-edit-trim-end').addEventListener('input', e => { state.params.trimEnd = e.target.value; updateCommand(); });
+    document.getElementById('p-edit-merge').addEventListener('input', e => { state.params.mergeFiles = e.target.value; updateCommand(); });
+    document.getElementById('p-edit-watermark').addEventListener('input', e => {
+      state.params.watermarkImage = e.target.value;
+      document.getElementById('edit-watermark-pos-group').style.display = e.target.value ? 'block' : 'none';
+      updateCommand();
+    });
+    document.getElementById('p-edit-watermark-pos').addEventListener('change', e => { state.params.watermarkPosition = e.target.value; updateCommand(); });
+    document.getElementById('p-edit-subtitle').addEventListener('input', e => { state.params.subtitleFile = e.target.value; updateCommand(); });
+
+    // Additional Options
+    document.getElementById('p-overwrite').addEventListener('change', e => { state.params.overwrite = e.target.checked; updateCommand(); });
+    document.getElementById('p-verbose').addEventListener('change', e => { state.params.verbose = e.target.checked; updateCommand(); });
+    document.getElementById('p-custom-flags').addEventListener('input', e => { state.params.customFlags = e.target.value; updateCommand(); });
+
+    // ─── Presets ─────────────────────────────────────────
+    const presets = {
+      'web-mp4': { operation:'convert', outputFormat:'mp4', params:{ videoCodec:'h264', audioCodec:'aac', preset:'medium', customFlags:'-movflags +faststart' }},
+      'hq-archive': { operation:'compress', outputFormat:'mkv', params:{ videoCodec:'h265', crf:'18', preset:'slow', qualityMode:'crf' }},
+      'small-size': { operation:'compress', outputFormat:'mp4', params:{ videoCodec:'h264', crf:'28', resolution:'720p', preset:'fast', qualityMode:'crf' }},
+      'extract-mp3': { operation:'audio', outputFormat:'mp3', params:{ audioCodec:'mp3', audioBitrate:'192k' }},
+      'to-gif': { operation:'convert', outputFormat:'gif', params:{ videoCodec:'copy', audioCodec:'copy' }},
+    };
+
+    document.querySelectorAll('.preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const preset = presets[btn.dataset.preset];
+        if (!preset) return;
+        state.operation = preset.operation;
+        state.outputFormat = preset.outputFormat;
+        state.params = { ...preset.params };
+        document.getElementById('output-format').value = preset.outputFormat;
+        autoFillOutput();
+        document.querySelectorAll('.op-card').forEach(c => c.classList.toggle('selected', c.dataset.op === preset.operation));
+        updateCommand();
+        goToStep(2);
+      });
+    });
+
+    // ─── History ─────────────────────────────────────────
+    const HISTORY_KEY = 'ffmpeg-builder-history';
+    const MAX_HISTORY = 20;
+
+    function loadHistory() {
+      try { return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; } catch { return []; }
+    }
+
+    function saveHistoryItem() {
+      const history = loadHistory();
+      history.unshift({ time: new Date().toLocaleString('zh-CN'), type: state.operation, command: document.getElementById('command-output').textContent, state: JSON.parse(JSON.stringify(state)) });
+      if (history.length > MAX_HISTORY) history.length = MAX_HISTORY;
+      localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = loadHistory();
+      const container = document.getElementById('history-list');
+      if (history.length === 0) { container.innerHTML = '<p class="empty-hint">暂无历史记录</p>'; return; }
+      const typeNames = { convert:'格式转换', compress:'压缩编码', audio:'音频处理', edit:'视频剪辑' };
+      container.innerHTML = history.map((item, i) => `<div class="history-item" data-index="${i}"><span class="history-type">${typeNames[item.type]||item.type}</span><div class="history-time">${item.time}</div><div class="history-cmd">${item.command}</div></div>`).join('');
+      container.querySelectorAll('.history-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const item = history[parseInt(el.dataset.index)];
+          if (item.state) {
+            Object.assign(state, item.state);
+            document.getElementById('input-file').value = state.inputFile || '';
+            document.getElementById('output-file').value = state.outputFile || '';
+            document.getElementById('output-format').value = state.outputFormat || 'mp4';
+            document.querySelectorAll('.op-card').forEach(c => c.classList.toggle('selected', c.dataset.op === state.operation));
+            updateCommand();
+            goToStep(2);
+          }
+        });
+      });
+    }
+
+    document.getElementById('btn-save-history').addEventListener('click', saveHistoryItem);
+    document.getElementById('btn-clear-history').addEventListener('click', () => { localStorage.removeItem(HISTORY_KEY); renderHistory(); });
+    renderHistory();
+
+    // ─── Command Breakdown ───────────────────────────────
+    function updateBreakdown() {
+      const container = document.getElementById('command-breakdown');
+      const s = state;
+      const p = s.params;
+      const parts = [{ flag:'ffmpeg', desc:'调用 FFmpeg 程序' }];
+      if (p.overwrite) parts.push({ flag:'-y', desc:'覆盖输出文件' });
+      parts.push({ flag:`-i ${s.inputFile||'input.mp4'}`, desc:'指定输入文件' });
+      if (p.videoCodec) parts.push({ flag:`-c:v ${builder.codecName(p.videoCodec)}`, desc:`视频编码器: ${p.videoCodec}` });
+      if (p.audioCodec) parts.push({ flag:`-c:a ${builder.codecName(p.audioCodec)}`, desc:`音频编码器: ${p.audioCodec}` });
+      if (p.crf !== undefined && p.qualityMode === 'crf') parts.push({ flag:`-crf ${p.crf}`, desc:'质量因子 (越低越好)' });
+      if (p.bitrate && p.qualityMode === 'cbr') parts.push({ flag:`-b:v ${p.bitrate}`, desc:'视频码率' });
+      if (p.resolution && p.resolution !== 'original') parts.push({ flag:`-s ${builder.resolutionValue(p.resolution)}`, desc:'输出分辨率' });
+      if (p.framerate && p.framerate !== 'original') parts.push({ flag:`-r ${p.framerate}`, desc:'帧率' });
+      if (p.preset) parts.push({ flag:`-preset ${p.preset}`, desc:'编码预设' });
+      if (p.trimStart) parts.push({ flag:`-ss ${p.trimStart}`, desc:'裁剪起始时间' });
+      if (p.trimEnd) parts.push({ flag:`-to ${p.trimEnd}`, desc:'裁剪结束时间' });
+      if (p.customFlags) parts.push({ flag:p.customFlags, desc:'自定义参数' });
+      parts.push({ flag:s.outputFile||`output.${s.outputFormat}`, desc:'输出文件' });
+      container.innerHTML = parts.map(x => `<div class="breakdown-item"><span class="breakdown-flag">${x.flag}</span><div class="breakdown-desc">${x.desc}</div></div>`).join('');
+    }
+  </script>
+</body>
+</html>
