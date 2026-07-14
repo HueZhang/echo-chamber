@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>CR7 OUT — Sign the Petition</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #080808;
+    color: #e0e0e0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    display: flex; justify-content: center;
+    line-height: 1.5;
+  }
+  .page {
+    max-width: 430px; width: 100%;
+    padding-bottom: 60px;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    width: 100%;
+  }
+  .hero img {
+    width: 100%; display: block;
+    object-fit: cover; max-height: 55vh;
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, #080808 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 24px;
+  }
+  .hero-overlay h1 {
+    font-size: clamp(2.2rem, 10vw, 3.8rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #e63946;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.8);
+    text-align: center;
+    line-height: 1.1;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  /* Subtitle */
+  .subtitle {
+    text-align: center; padding: 20px 16px 0;
+    font-size: 1.4rem; font-weight: 700;
+    color: #fff;
+  }
+
+  /* Description */
+  .desc {
+    text-align: center; padding: 8px 20px 0;
+    font-size: 0.9rem; color: #999;
+    max-width: 380px; margin: 0 auto;
+  }
+
+  /* Counter */
+  .counter-section {
+    text-align: center; padding: 28px 16px 0;
+  }
+  .counter-section .count {
+    display: block;
+    font-size: clamp(2.4rem, 8vw, 3.6rem);
+    font-weight: 900; color: #fff;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+  .counter-section .label {
+    display: block; font-size: 0.85rem;
+    color: #888; margin-top: 2px;
+  }
+
+  /* Goal bar */
+  .goal-bar-wrap {
+    padding: 12px 20px 0;
+  }
+  .goal-bar {
+    width: 100%; height: 6px;
+    background: #1a1a1a; border-radius: 3px;
+    overflow: hidden;
+  }
+  .goal-bar-fill {
+    height: 100%; background: #e63946;
+    border-radius: 3px; transition: width 0.3s;
+  }
+  .goal-meta {
+    display: flex; justify-content: space-between;
+    padding: 6px 20px 0; font-size: 0.75rem; color: #666;
+  }
+  .goal-meta .pct { color: #e63946; }
+
+  /* Sign button */
+  .btn-wrap {
+    text-align: center; padding: 24px 20px 0;
+  }
+  .btn-sign {
+    display: block; width: 100%;
+    padding: 16px; border: none; border-radius: 10px;
+    background: #e63946; color: #fff;
+    font-size: 1.1rem; font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .btn-sign:active { transform: scale(0.97); }
+  .btn-sign.signed {
+    background: #1a1a1a; color: #555;
+    pointer-events: none;
+  }
+
+  /* Reasons */
+  .reasons-title {
+    padding: 36px 20px 14px;
+    font-size: 1.1rem; font-weight: 700; color: #fff;
+    text-align: center;
+  }
+  .reasons {
+    padding: 0 20px;
+    list-style: none;
+    counter-reset: reason;
+  }
+  .reasons li {
+    counter-increment: reason;
+    background: #111;
+    border-radius: 10px; padding: 14px 16px;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    display: flex; align-items: flex-start; gap: 12px;
+  }
+  .reasons li::before {
+    content: counter(reason);
+    background: #e63946; color: #fff;
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .reasons li h3 {
+    font-size: 0.9rem; font-weight: 700; color: #fff;
+    margin-bottom: 2px;
+  }
+  .reasons li p {
+    font-size: 0.8rem; color: #888;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center; padding: 32px 20px 20px;
+    font-size: 0.7rem; color: #444;
+  }
+  .footer a { color: #e63946; text-decoration: none; }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.85; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+  <!-- Hero -->
+  <div class="hero">
+    <img src="./static/img.jpg" alt="Cristiano Ronaldo">
+    <div class="hero-overlay">
+      <h1>CR7 OUT</h1>
+    </div>
+  </div>
+
+  <!-- Subtitle -->
+  <div class="subtitle">Portugal Deserves Better</div>
+
+  <!-- Description -->
+  <p class="desc">
+    Cristiano Ronaldo's continued presence in the Portugal national team
+    holds back a generation of talented players. His fan army harasses
+    teammates online, the entire system bends to accommodate one aging star,
+    and young forwards waste their prime on the bench. It's time to move on.
+  </p>
+
+  <!-- Counter -->
+  <div class="counter-section">
+    <span class="count" id="counter">0</span>
+    <span class="label">people have signed</span>
+  </div>
+
+  <!-- Goal bar -->
+  <div class="goal-bar-wrap">
+    <div class="goal-bar"><div class="goal-bar-fill" id="goalFill"></div></div>
+  </div>
+  <div class="goal-meta">
+    <span>Goal: <strong>100,000,000</strong></span>
+    <span class="pct" id="goalPct">0%</span>
+  </div>
+
+  <!-- Sign button -->
+  <div class="btn-wrap">
+    <button class="btn-sign" id="btnSign" onclick="sign()">Sign the Petition</button>
+  </div>
+
+  <!-- Reasons -->
+  <div class="reasons-title">Why CR7 Must Step Down</div>
+  <ol class="reasons">
+    <li>
+      <div>
+        <h3>Past His Prime, Blocking the Future</h3>
+        <p>A 41-year-old playing 90 minutes while world-class young forwards sit on the bench is not leadership — it's sabotage.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Fan Army Harasses Teammates</h3>
+        <p>Every Portugal loss triggers a wave of abuse toward his own teammates. Bruno Fernandes, Joao Felix, and Rafael Leao have all been targets.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>The Entire Tactical System Bends to Him</h3>
+        <p>Portugal doesn't play a system — it plays "get the ball to Ronaldo." A team of elite talent reduced to a support crew for one man.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Young Talents Wasted</h3>
+        <p>Goncalo Ramos, Francisco Conceicao, and others watch from the bench while a 41-year-old plays 180 minutes per international break.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Media Circus Follows Him Everywhere</h3>
+        <p>The national team can't hold a press conference without questions about Ronaldo's mood, Ronaldo's gestures, Ronaldo's next move.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>His Ego Outweighs the Badge</h3>
+        <p>Walking off before the final whistle, throwing captain armbands, refusing to celebrate teammates' goals — the pattern is clear.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Other Captains Build Teams; He Builds a Cult</h3>
+        <p>Healthy teams allow criticism. Ronaldo's orbit treats any questioning of his place as an attack requiring a fan mobilization.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>World Cup 2026 Proved It</h3>
+        <p>Another tournament, another early exit. Portugal hasn't reached a World Cup semifinal with Ronaldo as the focal point since 2006.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>Even Portugal Is Divided</h3>
+        <p>Portuguese fans increasingly want a fresh start. Polls show a majority now favor building around younger players.</p>
+      </div>
+    </li>
+    <li>
+      <div>
+        <h3>The Numbers Don't Lie</h3>
+        <p>Zero goals from open play in his last three major tournament knockout stages. The output no longer matches the name.</p>
+      </div>
+    </li>
+  </ol>
+
+  <!-- Footer -->
+  <div class="footer">
+    Not affiliated with FIFA, UEFA, or the Portuguese Football Federation.<br>
+    <a href="https://x.com/cr7out" target="_blank" rel="noopener">@cr7out</a>
+  </div>
+</div>
+
+<audio id="bgAudio" src="./static/output1_30s.m4a" loop autoplay playsinline preload="auto"></audio>
+
+<script>
+const GOAL = 100_000_000;
+const CAMPAIGN_START = new Date('2025-03-15T00:00:00Z').getTime();
+
+function calcVotes() {
+  const elapsed = (Date.now() - CAMPAIGN_START) / 1000;
+  const days = elapsed / 86400;
+  return Math.floor(elapsed * 0.85 + days * days * 35);
+}
+
+const el = {
+  counter: document.getElementById('counter'),
+  goalFill: document.getElementById('goalFill'),
+  goalPct: document.getElementById('goalPct'),
+  btnSign: document.getElementById('btnSign'),
+  audio: document.getElementById('bgAudio'),
+};
+
+// Session ticks for live feel
+let ticks = parseInt(sessionStorage.getItem('cr7_ticks') || '0', 10);
+let lastTickTime = Date.now();
+
+function format(n) {
+  return n.toLocaleString('en-US');
+}
+
+function update() {
+  const base = calcVotes();
+  const total = Math.min(base + ticks, GOAL);
+  const pct = ((total / GOAL) * 100).toFixed(1);
+
+  el.counter.textContent = format(total);
+  el.goalFill.style.width = pct + '%';
+  el.goalPct.textContent = pct + '% of goal';
+}
+
+// Tick: ~30 votes/sec
+setInterval(function() {
+  const now = Date.now();
+  const dt = (now - lastTickTime) / 1000;
+  lastTickTime = now;
+  ticks += Math.floor(dt * 30 * (0.5 + Math.random()));
+  sessionStorage.setItem('cr7_ticks', ticks);
+  update();
+}, 100);
+
+// Full recalc every 5 seconds
+setInterval(update, 5000);
+
+// Sign
+function sign() {
+  if (localStorage.getItem('cr7_signed')) return;
+  localStorage.setItem('cr7_signed', '1');
+  ticks += Math.floor(Math.random() * 200) + 50;
+  sessionStorage.setItem('cr7_ticks', ticks);
+  el.btnSign.textContent = "You've Signed ✔";
+  el.btnSign.classList.add('signed');
+}
+
+// Restore signed state
+if (localStorage.getItem('cr7_signed')) {
+  el.btnSign.textContent = "You've Signed ✔";
+  el.btnSign.classList.add('signed');
+}
+
+// Audio — aggressive autoplay
+(function kick() {
+  var a = el.audio;
+  a.play().catch(function(){});
+  // ponytail: spin-loop retry, browser may lift block after short delay
+  setTimeout(function() { a.play().catch(function(){}); }, 300);
+  setTimeout(function() { a.play().catch(function(){}); }, 1000);
+})();
+
+// Init
+update();
+</script>
+</body>
+</html>
