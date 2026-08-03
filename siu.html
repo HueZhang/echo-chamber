@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026世界杯 计分大屏</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #08080f;
+    color: #e0e0e0;
+    font-family: "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    user-select: none; overflow: hidden;
+  }
+
+  .header { padding: 14px 0 4px; text-align: center; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 4px; color: #d4a843; }
+
+  /* ── stage + match selectors (center) ── */
+  .selector-row {
+    display: flex; gap: 12px; align-items: center; padding: 8px 16px;
+  }
+  .selector-row label { color: #888; font-size: 14px; white-space: nowrap; }
+  .sel {
+    padding: 8px 14px; border: 1px solid #2a2a40; border-radius: 6px;
+    background: #14141f; color: #ccc; font-size: 15px; cursor: pointer; font-family: inherit;
+    min-width: 160px;
+  }
+  .sel:focus { border-color: #d4a843; outline: none; }
+
+  /* ── scoreboard ── */
+  .scoreboard {
+    display: flex; align-items: center; justify-content: center;
+    gap: 28px; padding: 8px 20px; flex: 1; width: 100%; max-width: 1100px;
+  }
+
+  .team-panel {
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    flex: 1; max-width: 340px;
+  }
+
+  .flag-wrap {
+    width: 180px; height: 120px; border-radius: 8px; overflow: hidden;
+    border: 2px solid #2a2a40; background: #14141f;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flag-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .flag-placeholder { font-size: 48px; color: #333; }
+
+  .team-name { font-size: 26px; font-weight: 700; color: #fff; text-align: center; min-height: 36px; }
+
+  .team-select {
+    padding: 7px 10px; border: 1px solid #2a2a40; border-radius: 6px;
+    background: #14141f; color: #ccc; font-size: 13px; width: 100%;
+    max-width: 260px; cursor: pointer; font-family: inherit;
+  }
+  .team-select:disabled { opacity: .35; cursor: not-allowed; }
+  .team-select:focus { border-color: #d4a843; outline: none; }
+
+  .fixed-badge {
+    font-size: 11px; color: #d4a843; border: 1px solid #d4a84333;
+    border-radius: 4px; padding: 2px 8px;
+  }
+
+  /* ── center ── */
+  .center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+  .scores { display: flex; align-items: center; gap: 14px; }
+  .score {
+    font-size: 140px; font-weight: 900; font-family: "Courier New", "Consolas", monospace;
+    color: #fff; line-height: 1; min-width: 130px; text-align: center;
+    text-shadow: 0 0 30px rgba(212,168,67,0.3); transition: text-shadow .3s;
+  }
+  .score.rolling {
+    text-shadow: 0 0 50px rgba(212,168,67,0.7), 0 0 80px rgba(212,168,67,0.3);
+  }
+  .score-divider { font-size: 48px; color: #555; font-weight: 300; }
+
+  .stage-badge {
+    font-size: 12px; color: #666; letter-spacing: 2px;
+    padding: 3px 14px; border: 1px solid #2a2a40; border-radius: 20px;
+  }
+
+  /* ── status ── */
+  .status-bar {
+    padding: 10px 24px 18px; display: flex; align-items: center; gap: 12px; font-size: 16px;
+  }
+  .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #555; transition: background .3s; }
+  .status-dot.rolling { background: #4caf50; box-shadow: 0 0 12px rgba(76,175,80,0.5); }
+  .status-dot.stopped { background: #f44336; box-shadow: 0 0 12px rgba(244,67,54,0.5); }
+  .space-hint { color: #666; font-size: 14px; }
+  .space-hint kbd {
+    display: inline-block; padding: 4px 12px; border: 1px solid #555;
+    border-radius: 4px; font-family: inherit; font-size: 14px; color: #ccc;
+    background: #14141f; margin: 0 4px; min-width: 56px; text-align: center;
+  }
+  .btn {
+    padding: 10px 24px; border: 1px solid #d4a843; border-radius: 8px;
+    background: transparent; color: #d4a843; font-size: 15px; cursor: pointer;
+    font-family: inherit; transition: all .15s;
+  }
+  .btn:hover { background: #d4a843; color: #08080f; }
+  .btn.primary { background: #d4a843; color: #08080f; font-weight: 700; }
+  .btn.primary:hover { background: #e0b850; }
+
+  /* ── mobile ── */
+  @media (max-width: 768px) {
+    body { min-height: 100dvh; overflow: hidden; }
+    .header { padding: 8px 0 2px; }
+    .header h1 { font-size: 14px; letter-spacing: 2px; }
+
+    .selector-row { gap: 4px; padding: 4px 6px; }
+    .selector-row label { font-size: 11px; }
+    .sel { font-size: 11px; padding: 5px 6px; min-width: 0; flex: 1; }
+
+    .scoreboard {
+      flex: 1; flex-direction: column; gap: 16px; padding: 12px; max-width: 100%;
+      justify-content: center;
+    }
+
+    .team-panel { flex-direction: row; gap: 8px; max-width: none; flex: 0; align-items: center; }
+    .flag-wrap { width: 64px; height: 42px; border-radius: 4px; border-width: 1px; }
+    .flag-placeholder { font-size: 26px; }
+    .team-name { font-size: 17px; min-height: 0; }
+    .team-select { font-size: 12px; padding: 5px 8px; max-width: none; flex: 1; }
+    .fixed-badge { font-size: 10px; padding: 1px 6px; }
+
+    .center { flex-shrink: 1; }
+    .scores { gap: 8px; }
+    .score { font-size: 96px; min-width: 80px; }
+    .score-divider { font-size: 36px; }
+    .stage-badge { font-size: 11px; padding: 2px 10px; }
+
+    .status-bar { gap: 4px; font-size: 11px; padding: 4px 6px 8px; flex-wrap: wrap; justify-content: center; }
+    .space-hint { font-size: 10px; }
+    .space-hint kbd { font-size: 10px; padding: 2px 5px; min-width: 30px; margin: 0 2px; }
+    .btn { font-size: 11px; padding: 6px 14px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header"><h1>2026 世界杯 计分大屏</h1></div>
+
+<div class="selector-row">
+  <label>赛段</label>
+  <select class="sel" id="stageSel"></select>
+  <label>场次</label>
+  <select class="sel" id="matchSel"></select>
+</div>
+
+<div class="scoreboard">
+  <div class="team-panel">
+    <div class="flag-wrap" id="homeFlag"><span class="flag-placeholder">?</span></div>
+    <div class="team-name" id="homeName">—</div>
+    <select class="team-select" id="homeSelect"></select>
+    <span class="fixed-badge" id="homeBadge" style="display:none">已确定</span>
+  </div>
+
+  <div class="center">
+    <div class="scores">
+      <span class="score" id="homeScore">0</span>
+      <span class="score-divider">:</span>
+      <span class="score" id="awayScore">0</span>
+    </div>
+    <div class="stage-badge" id="matchLabel">—</div>
+  </div>
+
+  <div class="team-panel">
+    <div class="flag-wrap" id="awayFlag"><span class="flag-placeholder">?</span></div>
+    <div class="team-name" id="awayName">—</div>
+    <select class="team-select" id="awaySelect"></select>
+    <span class="fixed-badge" id="awayBadge" style="display:none">已确定</span>
+  </div>
+</div>
+
+<div class="status-bar">
+  <span class="status-dot stopped" id="statusDot"></span>
+  <span id="statusText">已停止</span>
+  <span class="space-hint">按 <kbd>空格</kbd> 开始 / 停止</span>
+  <button class="btn primary" id="toggleBtn">开始</button>
+</div>
+
+<script>
+// ── countries (all 2026 WC participants + extras) ──
+const countryMap = {
+  ar:'阿根廷', br:'巴西', fr:'法国', de:'德国', es:'西班牙', gb:'英格兰',
+  pt:'葡萄牙', nl:'荷兰', it:'意大利', be:'比利时', hr:'克罗地亚', uy:'乌拉圭',
+  jp:'日本', kr:'韩国', ma:'摩洛哥', sn:'塞内加尔', us:'美国', mx:'墨西哥',
+  ca:'加拿大', au:'澳大利亚', ir:'伊朗', sa:'沙特阿拉伯', qa:'卡塔尔',
+  dk:'丹麦', ch:'瑞士', pl:'波兰', rs:'塞尔维亚', ua:'乌克兰', at:'奥地利',
+  cz:'捷克', se:'瑞典', no:'挪威', tr:'土耳其', co:'哥伦比亚', cl:'智利',
+  pe:'秘鲁', ec:'厄瓜多尔', cm:'喀麦隆', ng:'尼日利亚', gh:'加纳',
+  ci:'科特迪瓦', eg:'埃及', tn:'突尼斯', za:'南非', cr:'哥斯达黎加',
+  pa:'巴拿马', nz:'新西兰', ba:'波黑', dz:'阿尔及利亚', cd:'刚果民主共和国',
+  cv:'佛得角', py:'巴拉圭',
+};
+const flagUrl = (c) => `https://flagcdn.com/w320/${c}.png`;
+const getName = (c) => countryMap[c] || '—';
+
+// ── 2026 WC knockout bracket (real data as of Jul 6) ──
+//
+// R16 (八分之一决赛 / Round of 16) — all teams known, 4 done, 4 to play
+//   ✓ Canada 0-3 Morocco     ✓ Paraguay 0-1 France
+//   ✓ Brazil 1-2 Norway      ✓ Mexico 2-3 England
+//   ○ Portugal vs Spain (Jul 6)   ○ USA vs Belgium (Jul 6)
+//   ○ Argentina vs Egypt          ○ Switzerland vs Colombia
+//
+// QF:
+//   QF1: France vs Morocco       — FIXED
+//   QF2: Norway vs England       — FIXED
+//   QF3: W(POR/ESP) vs W(USA/BEL) — TBD (2 options per side)
+//   QF4: W(ARG/EGY) vs W(SUI/COL) — TBD (2 options per side)
+
+const bracket = {
+  r16: {
+    name: '八分之一决赛',
+    matches: [
+      { id:'r16_5', name:'葡萄牙 vs 西班牙',        home:'pt', away:'es', fixed:true },
+      { id:'r16_6', name:'美国 vs 比利时',          home:'us', away:'be', fixed:true },
+      { id:'r16_7', name:'阿根廷 vs 埃及',          home:'ar', away:'eg', fixed:true },
+      { id:'r16_8', name:'瑞士 vs 哥伦比亚',        home:'ch', away:'co', fixed:true },
+    ]
+  },
+  qf: {
+    name: '四分之一决赛',
+    matches: [
+      { id:'qf1', name:'法国 vs 摩洛哥',            home:'fr', away:'ma', fixed:true },
+      { id:'qf2', name:'挪威 vs 英格兰',            home:'no', away:'gb', fixed:true },
+      { id:'qf3', name:'葡/西胜者 vs 美/比胜者',    home:null, away:null, fixed:false,
+        homeOpts:['pt','es'], awayOpts:['us','be'] },
+      { id:'qf4', name:'阿/埃胜者 vs 瑞士/哥胜者',  home:null, away:null, fixed:false,
+        homeOpts:['ar','eg'], awayOpts:['ch','co'] },
+    ]
+  },
+  sf: {
+    name: '半决赛',
+    matches: [
+      { id:'sf1', name:'QF1胜者 vs QF3胜者', home:null, away:null, fixed:false },
+      { id:'sf2', name:'QF2胜者 vs QF4胜者', home:null, away:null, fixed:false },
+    ]
+  },
+  final: {
+    name: '决赛',
+    matches: [
+      { id:'fin', name:'决赛', home:null, away:null, fixed:false },
+    ]
+  },
+  third: {
+    name: '三四名决赛',
+    matches: [
+      { id:'3rd', name:'三四名决赛', home:null, away:null, fixed:false },
+    ]
+  },
+};
+
+// ── state ──
+let stageKey = 'r16', matchIdx = 0;
+let homeScore = 0, awayScore = 0, rolling = false;
+
+// ── DOM ──
+const $ = (id) => document.getElementById(id);
+const stageSel  = $('stageSel');
+const matchSel  = $('matchSel');
+const homeFlag  = $('homeFlag');
+const awayFlag  = $('awayFlag');
+const homeName  = $('homeName');
+const awayName  = $('awayName');
+const homeSelect = $('homeSelect');
+const awaySelect = $('awaySelect');
+const homeBadge = $('homeBadge');
+const awayBadge = $('awayBadge');
+const homeScoreEl = $('homeScore');
+const awayScoreEl = $('awayScore');
+const matchLabel  = $('matchLabel');
+const statusDot   = $('statusDot');
+const statusText  = $('statusText');
+const toggleBtn   = $('toggleBtn');
+
+function currentMatch() { return bracket[stageKey].matches[matchIdx]; }
+
+// ── populate stage selector ──
+Object.entries(bracket).forEach(([k,v]) => {
+  const o = document.createElement('option');
+  o.value = k; o.textContent = v.name;
+  stageSel.appendChild(o);
+});
+stageSel.value = stageKey;
+
+// ── match selector ──
+function fillMatchSel() {
+  matchSel.innerHTML = '';
+  bracket[stageKey].matches.forEach((m, i) => {
+    const o = document.createElement('option');
+    o.value = i; o.textContent = m.name;
+    matchSel.appendChild(o);
+  });
+  matchIdx = 0;
+  matchSel.value = '0';
+}
+fillMatchSel();
+
+// ── team selector helpers ──
+function fillSelect(sel, codes) {
+  sel.innerHTML = '<option value="">— 选择队伍 —</option>';
+  codes.forEach(c => {
+    const o = document.createElement('option');
+    o.value = c; o.textContent = getName(c);
+    sel.appendChild(o);
+  });
+}
+
+function allCountryCodes() { return Object.keys(countryMap); }
+
+// ── flag ──
+function setFlag(el, code) {
+  if (!code) { el.innerHTML = '<span class="flag-placeholder">?</span>'; return; }
+  const img = document.createElement('img');
+  img.src = flagUrl(code); img.alt = '';
+  img.onerror = () => { el.innerHTML = '<span class="flag-placeholder">?</span>'; };
+  el.innerHTML = ''; el.appendChild(img);
+}
+
+// ── render ──
+function renderMatch() {
+  const m = currentMatch();
+  setFlag(homeFlag, m.home);
+  setFlag(awayFlag, m.away);
+  homeName.textContent = getName(m.home);
+  awayName.textContent = getName(m.away);
+  matchLabel.textContent = bracket[stageKey].name + ' · ' + m.name;
+
+  if (m.fixed) {
+    homeSelect.style.display = 'none';
+    awaySelect.style.display = 'none';
+    homeBadge.style.display = '';
+    awayBadge.style.display = '';
+    homeSelect.disabled = true;
+    awaySelect.disabled = true;
+  } else {
+    homeBadge.style.display = 'none';
+    awayBadge.style.display = 'none';
+    homeSelect.style.display = '';
+    awaySelect.style.display = '';
+    homeSelect.disabled = false;
+    awaySelect.disabled = false;
+    const homeCodes = m.homeOpts || allCountryCodes();
+    const awayCodes = m.awayOpts || allCountryCodes();
+    fillSelect(homeSelect, homeCodes);
+    fillSelect(awaySelect, awayCodes);
+    homeSelect.value = m.home || '';
+    awaySelect.value = m.away || '';
+  }
+
+  homeScore = 0; awayScore = 0;
+  homeScoreEl.textContent = '0';
+  awayScoreEl.textContent = '0';
+  stopRolling();
+}
+
+// ── events ──
+stageSel.onchange = () => {
+  stageKey = stageSel.value;
+  fillMatchSel();
+  renderMatch();
+};
+
+matchSel.onchange = () => {
+  matchIdx = parseInt(matchSel.value);
+  renderMatch();
+};
+
+homeSelect.onchange = () => {
+  const code = homeSelect.value;
+  setFlag(homeFlag, code);
+  homeName.textContent = getName(code);
+  homeScore = 0; homeScoreEl.textContent = '0';
+  stopRolling();
+};
+
+awaySelect.onchange = () => {
+  const code = awaySelect.value;
+  setFlag(awayFlag, code);
+  awayName.textContent = getName(code);
+  awayScore = 0; awayScoreEl.textContent = '0';
+  stopRolling();
+};
+
+// ── score rolling ──
+let intervals = [];
+
+function startRolling() {
+  if (rolling) return;
+  rolling = true;
+  updateUI();
+
+  // ponytail: weighted pool — 1-4 more likely than 5-7
+  const pool = [0,0,0,0, 1,1,1,1, 2,2,2,2, 3,3,3,3, 4,4, 5,5, 6,6];
+
+  intervals.push(setInterval(() => {
+    homeScoreEl.textContent = pool[Math.floor(Math.random() * pool.length)];
+  }, rand(30, 55)));
+
+  intervals.push(setInterval(() => {
+    awayScoreEl.textContent = pool[Math.floor(Math.random() * pool.length)];
+  }, rand(45, 75)));
+}
+
+function stopRolling() {
+  if (!rolling) { updateUI(); return; }
+  intervals.forEach(clearInterval);
+  intervals = [];
+  homeScore = parseInt(homeScoreEl.textContent);
+  awayScore = parseInt(awayScoreEl.textContent);
+  rolling = false;
+  updateUI();
+}
+
+function toggleRolling() {
+  const m = currentMatch();
+  const h = m.fixed ? m.home : (homeSelect.value || null);
+  const a = m.fixed ? m.away : (awaySelect.value || null);
+  if (!h || !a) return;
+  if (rolling) stopRolling();
+  else { startRolling(); }
+}
+
+function rand(min, max) { return min + Math.random() * (max - min); }
+
+function updateUI() {
+  const scEls = [homeScoreEl, awayScoreEl];
+  if (rolling) {
+    statusDot.className = 'status-dot rolling';
+    statusText.textContent = '滚动中';
+    toggleBtn.textContent = '停止';
+    toggleBtn.classList.remove('primary');
+    scEls.forEach(el => el.classList.add('rolling'));
+  } else {
+    statusDot.className = 'status-dot stopped';
+    statusText.textContent = '已停止';
+    toggleBtn.textContent = '开始';
+    toggleBtn.classList.add('primary');
+    scEls.forEach(el => el.classList.remove('rolling'));
+  }
+}
+
+// ── keyboard ──
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); toggleRolling(); }
+});
+toggleBtn.onclick = toggleRolling;
+
+// ── init ──
+renderMatch();
+</script>
+</body>
+</html>
