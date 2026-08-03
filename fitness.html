@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14190F">
+<meta name="description" content="Echo Love 个人减脂训练计划：一周六练，爬楼燃脂 + 力量塑形，手机端查看用。">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%2314190F'/%3E%3Cpath%20d='M10%2052%20H26%20V40%20H42%20V28%20H54'%20stroke='%23C9F26B'%20stroke-width='6'%20fill='none'%20stroke-linecap='round'%20stroke-linejoin='round'/%3E%3C/svg%3E">
+<title>减脂训练计划 · Echo Love</title>
+<link rel="stylesheet" href="static/fitness.css">
+</head>
+<body>
+
+<!-- 动作小人图标库 -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+  <symbol id="icon-stairs" viewBox="0 0 64 64">
+    <circle cx="30" cy="10" r="5"/>
+    <path d="M30 18 L36 30"/>
+    <path d="M28 21 L19 27"/>
+    <path d="M34 23 L46 20"/>
+    <path d="M36 30 L33 38 L36 40"/>
+    <path d="M36 30 L44 34 L48 27"/>
+    <path d="M6 52 H22 V40 H38 V28 H52"/>
+  </symbol>
+  <symbol id="icon-pushup" viewBox="0 0 64 64">
+    <circle cx="32" cy="9" r="5"/>
+    <path d="M32 17 L32 36"/>
+    <path d="M32 36 L24 50 M32 36 L40 50"/>
+    <path d="M28 22 L18 38"/>
+    <path d="M36 22 L46 38"/>
+  </symbol>
+  <symbol id="icon-pushup-diamond" viewBox="0 0 64 64">
+    <circle cx="32" cy="9" r="5"/>
+    <path d="M32 17 L32 36"/>
+    <path d="M32 36 L26 50 M32 36 L38 50"/>
+    <path d="M28 22 L32 36 M36 22 L32 36"/>
+    <path d="M32 37 L36.5 41.5 L32 46 L27.5 41.5 Z"/>
+  </symbol>
+  <symbol id="icon-squat" viewBox="0 0 64 64">
+    <circle cx="30" cy="9" r="5"/>
+    <path d="M30 17 L35 29"/>
+    <path d="M33 22 L47 23"/>
+    <path d="M35 29 L44 41 L47 49"/>
+    <path d="M35 29 L29 41 L25 49"/>
+    <path d="M8 52 H56"/>
+  </symbol>
+  <symbol id="icon-plank" viewBox="0 0 64 64">
+    <circle cx="47" cy="18" r="5"/>
+    <path d="M43 23 L27 34 L14 40"/>
+    <path d="M43 23 L49 32 L55 39"/>
+  </symbol>
+  <symbol id="icon-crunch" viewBox="0 0 64 64">
+    <circle cx="19" cy="37" r="5"/>
+    <path d="M23 41 C29 45 33 47 36 47"/>
+    <path d="M36 47 L43 41 L49 48"/>
+    <path d="M26 43 L21 36"/>
+    <path d="M4 48 H60"/>
+  </symbol>
+  <symbol id="icon-bridge" viewBox="0 0 64 64">
+    <circle cx="15" cy="43" r="5"/>
+    <path d="M19 46 L30 30"/>
+    <path d="M30 30 L40 37 L47 49"/>
+    <path d="M21 46 L28 47"/>
+    <path d="M4 50 H60"/>
+  </symbol>
+  <symbol id="icon-walk" viewBox="0 0 64 64">
+    <circle cx="31" cy="9" r="5"/>
+    <path d="M31 17 L37 29"/>
+    <path d="M34 21 L47 25"/>
+    <path d="M29 21 L21 27"/>
+    <path d="M37 29 L45 35 L51 44"/>
+    <path d="M37 29 L28 37 L22 48"/>
+  </symbol>
+  <symbol id="icon-stretch" viewBox="0 0 64 64">
+    <circle cx="32" cy="10" r="5"/>
+    <path d="M32 18 L33 34"/>
+    <path d="M31 22 C36 11 45 12 49 16"/>
+    <path d="M35 23 L39 29"/>
+    <path d="M33 34 L26 47 M33 34 L40 47"/>
+  </symbol>
+  <symbol id="icon-rest" viewBox="0 0 64 64">
+    <circle cx="32" cy="12" r="5"/>
+    <path d="M32 20 L32 34"/>
+    <path d="M30 23 L22 29"/>
+    <path d="M34 23 L42 29"/>
+    <path d="M32 34 L25 44 M32 34 L39 44"/>
+    <path d="M43 12 h5 l-5 6 h5"/>
+    <path d="M47 24 h4 l-4 5 h4"/>
+  </symbol>
+</svg>
+
+<header class="hero">
+  <div class="hero__inner">
+    <p class="hero__eyebrow">ECHO LOVE · 个人减脂计划</p>
+    <h1 class="hero__title">一周六练<br><em>爬楼燃脂</em> + 力量塑形</h1>
+    <p class="hero__sub">每天 40–60 分钟 · 累了先减爬楼，力量尽量保住</p>
+    <div class="hero__stats">
+      <div><b>7</b><span>天节奏</span></div>
+      <div><b>3</b><span>爬楼日</span></div>
+      <div><b>3</b><span>力量日</span></div>
+      <div><b>1</b><span>休息日</span></div>
+    </div>
+  </div>
+  <div class="hero__art" aria-hidden="true">
+    <span class="hero__ring"></span>
+    <svg class="hero__stair" viewBox="0 0 64 64"><use href="#icon-stairs"/></svg>
+  </div>
+</header>
+
+<nav class="daynav" id="daynav" aria-label="按天跳转">
+  <div class="daynav__chips">
+    <button type="button" class="chip" data-day="mon"><b>一</b>爬楼+上肢</button>
+    <button type="button" class="chip" data-day="tue"><b>二</b>腿部+核心</button>
+    <button type="button" class="chip" data-day="wed"><b>三</b>爬楼+上肢</button>
+    <button type="button" class="chip" data-day="thu"><b>四</b>腿部+核心</button>
+    <button type="button" class="chip" data-day="fri"><b>五</b>上肢+臀部</button>
+    <button type="button" class="chip" data-day="sat"><b>六</b>高强度爬楼</button>
+    <button type="button" class="chip" data-day="sun"><b>日</b>休息</button>
+  </div>
+</nav>
+
+<main class="plan">
+
+  <section class="day" id="day-mon" data-day="mon">
+    <header class="day__head">
+      <span class="day__badge">周一</span>
+      <span class="day__type">爬楼 + 上肢</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stairs"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">爬楼<span class="exercise__meta">2–3 趟 · 16 层×2–3</span></p>
+          <p class="exercise__note">只上不下，坐电梯下 · 每趟间休息 3–5 分钟</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">肩宽俯卧撑<span class="exercise__meta">3 组 × 8–12 次</span></p>
+          <p class="exercise__note">双手略宽于肩 · 练胸肌外侧</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup-diamond"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">钻石俯卧撑<span class="exercise__meta">3 组 · 力竭为止</span></p>
+          <p class="exercise__note">双手拇指食指合成钻石形 · 练三头肌和胸肌内侧</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">臀腿拉伸<span class="exercise__meta">1 轮 · 每个动作 30 秒</span></p>
+          <p class="exercise__note">大腿前后侧、臀部、小腿</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="day" id="day-tue" data-day="tue">
+    <header class="day__head">
+      <span class="day__badge">周二</span>
+      <span class="day__type">腿部 + 核心</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-squat"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">深蹲<span class="exercise__meta">3 组 × 12 次</span></p>
+          <p class="exercise__note">自重深蹲，慢下快起 · 腰背挺直，膝盖不内扣</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-plank"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">平板支撑<span class="exercise__meta">3 组 × 30–45 秒</span></p>
+          <p class="exercise__note">手肘撑地，身体一条线 · 核心收紧，不塌腰</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-walk"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">步行<span class="exercise__meta">一万步</span></p>
+          <p class="exercise__note">全天累计</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">全身拉伸<span class="exercise__meta">1 轮 · 每个动作 30 秒</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="day" id="day-wed" data-day="wed">
+    <header class="day__head">
+      <span class="day__badge">周三</span>
+      <span class="day__type">爬楼 + 上肢</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stairs"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">爬楼<span class="exercise__meta">2–3 趟 · 16 层×2–3</span></p>
+          <p class="exercise__note">同周一 · 只上不下，坐电梯下</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">肩宽俯卧撑<span class="exercise__meta">3 组 × 8–12 次</span></p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup-diamond"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">钻石俯卧撑<span class="exercise__meta">3 组 · 力竭为止</span></p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">臀腿拉伸<span class="exercise__meta">1 轮 · 每个动作 30 秒</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="day" id="day-thu" data-day="thu">
+    <header class="day__head">
+      <span class="day__badge">周四</span>
+      <span class="day__type">腿部 + 核心</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-squat"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">深蹲<span class="exercise__meta">3 组 × 12 次</span></p>
+          <p class="exercise__note">自重深蹲 · 腰背挺直，膝盖不内扣</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-crunch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">卷腹<span class="exercise__meta">3 组 × 15 次</span></p>
+          <p class="exercise__note">腰部贴地，肩胛骨离地 · 不用手抱头扯脖子</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-walk"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">步行<span class="exercise__meta">一万步</span></p>
+          <p class="exercise__note">全天累计</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">全身拉伸<span class="exercise__meta">1 轮 · 每个动作 30 秒</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="day" id="day-fri" data-day="fri">
+    <header class="day__head">
+      <span class="day__badge">周五</span>
+      <span class="day__type">上肢 + 臀部</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">肩宽俯卧撑<span class="exercise__meta">3 组 × 8–12 次</span></p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup-diamond"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">钻石俯卧撑<span class="exercise__meta">3 组 · 力竭为止</span></p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-bridge"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">臀桥<span class="exercise__meta">3 组 × 15 次</span></p>
+          <p class="exercise__note">仰卧，臀部发力上抬 · 顶部停留 1 秒</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-walk"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">步行<span class="exercise__meta">一万步</span></p>
+          <p class="exercise__note">全天累计</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">全身拉伸<span class="exercise__meta">1 轮 · 每个动作 30 秒</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="day day--hot" id="day-sat" data-day="sat">
+    <header class="day__head">
+      <span class="day__badge">周六</span>
+      <span class="day__type">高强度爬楼</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stairs"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">爬楼<span class="exercise__meta">3–4 趟 · 16 层×3–4</span></p>
+          <p class="exercise__note">只上不下 · 本周最强燃脂日</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">臀腿重点拉伸<span class="exercise__meta">1 轮 · 每个动作 45 秒</span></p>
+          <p class="exercise__note">大腿前后侧、臀部、小腿必做</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="day" id="day-sun" data-day="sun">
+    <header class="day__head">
+      <span class="day__badge">周日</span>
+      <span class="day__type">休息</span>
+    </header>
+    <ol class="exercise">
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-rest"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">休息 / 散步<span class="exercise__meta">放松</span></p>
+          <p class="exercise__note">无训练，或轻松散步</p>
+        </div>
+      </li>
+      <li>
+        <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stretch"/></svg>
+        <div class="exercise__info">
+          <p class="exercise__name">可选轻度拉伸<span class="exercise__meta">随意</span></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+</main>
+
+<section class="block" id="quick">
+  <h2>动作标准速查</h2>
+  <p class="lead">练之前扫一眼，动作比数量更重要。</p>
+  <ul class="quick">
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-stairs"/></svg>
+      <div>
+        <h3>爬楼</h3>
+        <p>只上不下，身体微前倾，脚后跟发力，扶扶手</p>
+      </div>
+    </li>
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup"/></svg>
+      <div>
+        <h3>肩宽俯卧撑</h3>
+        <p>双手略宽于肩，身体成直线，慢下快起</p>
+      </div>
+    </li>
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-pushup-diamond"/></svg>
+      <div>
+        <h3>钻石俯卧撑</h3>
+        <p>双手拇指食指合成钻石形置于胸下，肘部贴近身体</p>
+      </div>
+    </li>
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-squat"/></svg>
+      <div>
+        <h3>深蹲</h3>
+        <p>双脚肩宽，腰背挺直，像坐椅子一样往后坐，膝盖不内扣</p>
+      </div>
+    </li>
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-plank"/></svg>
+      <div>
+        <h3>平板支撑</h3>
+        <p>手肘撑地，身体一条直线，腹部收紧，不塌腰不撅屁股</p>
+      </div>
+    </li>
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-crunch"/></svg>
+      <div>
+        <h3>卷腹</h3>
+        <p>腰部始终贴地，只用腹部力量让肩胛骨离地，不抱头</p>
+      </div>
+    </li>
+    <li>
+      <svg class="exicon" viewBox="0 0 64 64"><use href="#icon-bridge"/></svg>
+      <div>
+        <h3>臀桥</h3>
+        <p>仰卧屈膝，臀部发力上抬至身体成直线，顶部夹紧停留 1 秒</p>
+      </div>
+    </li>
+  </ul>
+</section>
+
+<section class="block" id="stretch-ham">
+  <h2>臀腿拉伸 <span class="tag">爬楼日做</span></h2>
+  <p class="lead">爬完楼当天必做，练完拉伸等于练了两遍恢复。</p>
+  <ul class="stretch">
+    <li>
+      <div class="stretch__head"><h3>大腿前侧</h3><span class="stretch__time">每侧 30 秒</span></div>
+      <p>站立扶墙，手抓脚踝，脚后跟拉向臀部</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>大腿后侧</h3><span class="stretch__time">每侧 30 秒</span></div>
+      <p>一脚前伸脚跟着地，腰背挺直身体前倾</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>臀部</h3><span class="stretch__time">每侧 30 秒</span></div>
+      <p>坐着，脚踝搭对侧膝盖，身体前倾</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>小腿</h3><span class="stretch__time">每侧 30 秒</span></div>
+      <p>弓步扶墙，后腿伸直脚跟踩地，身体前移</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>大腿内侧</h3><span class="stretch__time">30 秒</span></div>
+      <p>坐地脚底相对，膝盖外开，手肘轻压膝盖</p>
+    </li>
+  </ul>
+</section>
+
+<section class="block" id="stretch-full">
+  <h2>全身拉伸 <span class="tag">非爬楼日做</span></h2>
+  <p class="lead">力量日结束后做，身体放松、下次练得更好。</p>
+  <ul class="stretch">
+    <li>
+      <div class="stretch__head"><h3>颈部</h3><span class="stretch__time">每侧 20 秒</span></div>
+      <p>手按头顶轻轻拉向一侧</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>肩部</h3><span class="stretch__time">每侧 20 秒</span></div>
+      <p>手臂横过胸前，另一只手勾住往胸口拉</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>三头肌</h3><span class="stretch__time">每侧 20 秒</span></div>
+      <p>手举高屈肘摸后背，另一手拉肘部</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>胸部</h3><span class="stretch__time">20–30 秒</span></div>
+      <p>手臂贴墙，身体前倾或外转</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>猫牛式</h3><span class="stretch__time">5–8 次</span></div>
+      <p>四足跪姿，吸气塌腰呼气弓背</p>
+    </li>
+    <li>
+      <div class="stretch__head"><h3>婴儿式</h3><span class="stretch__time">30 秒</span></div>
+      <p>跪坐趴下，手臂前伸，额头贴地</p>
+    </li>
+  </ul>
+</section>
+
+<section class="block" id="intensity">
+  <h2>强度自检</h2>
+  <p class="lead">先看状态再决定练多少，不硬撑也不偷懒。</p>
+  <ul class="intensity">
+    <li data-lvl="full">
+      <span class="dot"></span>
+      <div><h3>精力充沛</h3><p>按计划完成，爬楼可多加 1 趟</p></div>
+    </li>
+    <li data-lvl="ok">
+      <span class="dot"></span>
+      <div><h3>稍微累</h3><p>爬楼减 1 趟，力量照常</p></div>
+    </li>
+    <li data-lvl="tired">
+      <span class="dot"></span>
+      <div><h3>挺累的</h3><p>爬楼只做 1 趟，力量组数减半</p></div>
+    </li>
+    <li data-lvl="very">
+      <span class="dot"></span>
+      <div><h3>非常累</h3><p>只拉伸和散步，今天不训练</p></div>
+    </li>
+    <li class="is-rule">
+      <span class="dot"></span>
+      <div><h3>基本原则</h3><p>累了先减爬楼，力量尽量保住</p></div>
+    </li>
+  </ul>
+</section>
+
+<footer class="foot">
+  <p class="foot__motto">最好的训练，是你能坚持的那一套。</p>
+  <p>爬楼日别忘了臀腿拉伸 · 累了先减爬楼</p>
+</footer>
+
+<script src="static/fitness.js"></script>
+</body>
+</html>

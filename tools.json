@@ -5,6 +5,12 @@
     "desc": "简单的比赛转换为json",
 	"isHidden": false
   },
+   {
+    "name": "fitness",
+    "path": "fitness.html",
+    "desc": "训练计划",
+	"isHidden": false
+  },
   {
     "name": "简单转换",
     "path": "converttxt.html",
