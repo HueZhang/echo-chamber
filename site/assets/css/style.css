@@ -346,6 +346,20 @@ main {
   color: var(--accent-text);
 }
 
+a.pill--link {
+  background: transparent;
+  color: var(--accent-text);
+  border: 1px solid var(--border-strong);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+a.pill--link:hover {
+  background: var(--accent-soft);
+  border-color: var(--accent-text);
+}
+
 .lecture h3 {
   margin: 0 0 8px;
   font-family: var(--serif);

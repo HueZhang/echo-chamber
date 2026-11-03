@@ -29,7 +29,7 @@
         <span class="stat"><strong>14</strong> 篇选读</span>
         <span class="stat"><strong>2</strong> 周已完成</span>
       </div>
-      <p class="notice">当前进度：<strong>Week 1–2 共九篇已完成</strong>。其余阅读按讲逐批推进；未完成的篇目先链接到原文，方便你先读英文。术语统一收录在 <a href="glossary.html">全局术语表</a>。</p>
+      <p class="notice">当前进度：<strong>Week 1–2 共九篇已完成</strong>。其余阅读按讲逐批推进；未完成的篇目先链接到原文，方便你先读英文。课程网站已发布的 Slides（lecture01–11）已加在对应讲座的日期旁；术语统一收录在 <a href="glossary.html">全局术语表</a>。</p>
     </div>
   </section>
 
@@ -44,6 +44,7 @@
         <div class="lecture__meta">
           <span class="pill pill--theme">基础与全景</span>
           <span class="pill">Wed Sep 23</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture01.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>导论：什么是智能体系统？</h3>
         <p class="lecture__desc">课程导览、智能体简史，以及智能体的解剖结构：LLM 核心、推理、记忆、工具与环境。复合 AI 系统、工作流与智能体的区别，以及可靠性、训练、安全与评估等核心挑战。</p>
@@ -84,6 +85,7 @@
       <article class="lecture">
         <div class="lecture__meta">
           <span class="pill">Mon Sep 28</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture02.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>面向构建者的 LLM</h3>
         <p class="lecture__desc">从智能体构建者的视角看语言模型内部：解码策略、Transformer 注意力（含线性与混合注意力）与上下文长度、预训练到后训练的流程、推理与测试时扩展、结构化输入输出与约束解码，以及上下文工程。</p>
@@ -119,6 +121,7 @@
         <div class="lecture__meta">
           <span class="pill pill--theme">构建模块</span>
           <span class="pill">Wed Sep 30</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture03.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>检索增强生成（RAG）</h3>
         <p class="lecture__desc">为什么检索有用，以及 RAG 流水线的端到端环节：索引（分块、上下文检索、RAPTOR、HNSW）、从 BM25、DPR 到混合搜索的检索器、重排序与 ColBERT、智能体式 RAG（Self-RAG、Search-R1），以及常见失败模式。</p>
@@ -159,6 +162,7 @@
       <article class="lecture">
         <div class="lecture__meta">
           <span class="pill">Mon Oct 5</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture04.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>工具使用与函数调用</h3>
         <p class="lecture__desc">LLM 为什么需要工具，以及它如何学会使用工具：Toolformer、用 Gorilla 和 ToolLLM 扩展到成千上万个 API、从 REST 到函数调用再到 MCP 的标准接口、用 BFCL、ToolBench 和 τ-bench 评估工具使用，以及常见失败模式。</p>
@@ -194,6 +198,7 @@
         <div class="lecture__meta">
           <span class="pill pill--theme">框架与智能体设计</span>
           <span class="pill">Wed Oct 7</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture05.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>框架与编排</h3>
         <p class="lecture__desc">智能体工程的三大支柱——数据、系统与评估；DSPy（签名、模块、优化器）与 LangGraph（状态、节点、边）的现场演示；开源智能体脚手架巡礼（mini-SWE-agent、OpenHands、Pi）、用 Temporal 做持久化编排、可观测性工具与最佳实践。</p>
@@ -234,6 +239,7 @@
       <article class="lecture">
         <div class="lecture__meta">
           <span class="pill">Mon Oct 12</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture06.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>智能体设计模式与脚手架</h3>
         <p class="lecture__desc">工作流与智能体的区别，以及各自的设计模式：五种可组合的工作流模式、推理与行动模式（ReAct、Reflexion、CodeAct、ReWOO）、上下文管理模式（事件日志、压缩、观察掩蔽、上下文隔离），并以 Pi 脚手架为案例。</p>
@@ -285,6 +291,7 @@
         <div class="lecture__meta">
           <span class="pill pill--theme">记忆与多智能体系统</span>
           <span class="pill">Wed Oct 14</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture07.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>智能体记忆架构</h3>
         <p class="lecture__desc">智能体为什么需要记忆，以及四种记忆类型（工作记忆、情景记忆、语义记忆、程序记忆）。四种架构模式：技能库、MemGPT 式分层结构、反思式巩固、记忆维护。记忆基准，以及遗忘、隐私和过度个性化的开放问题。</p>
@@ -325,6 +332,7 @@
       <article class="lecture">
         <div class="lecture__meta">
           <span class="pill">Mon Oct 19</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture08.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>多智能体系统</h3>
         <p class="lecture__desc">何时使用单智能体、何时使用多智能体，以及如何构建：编排模式（编排器、蜂群、混合）、通过交接与消息板以及 A2A 协议通信、协调基础设施（任务账本、共享记忆、工作树隔离），以及多智能体系统为什么会失败。</p>
@@ -360,6 +368,7 @@
         <div class="lecture__meta">
           <span class="pill pill--theme">优化</span>
           <span class="pill">Wed Oct 21</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture09.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>优化</h3>
         <p class="lecture__desc">优化何时划算、怎么做：上下文优化（自举少样本、MIPROv2、OPRO、TextGrad、GEPA）、权重优化（在智能体轨迹上做 SFT、PPO 与 GRPO 强化学习、同策略蒸馏）、把智能体当作优化器（Darwin Gödel Machine、自动研究），以及何时优化提示、何时优化权重。</p>
@@ -400,6 +409,7 @@
       <article class="lecture">
         <div class="lecture__meta">
           <span class="pill">Mon Oct 26</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture10.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>📺 客座讲座：Terminal-Bench</h3>
         <p class="lecture__desc">Terminal-Bench 的联合创作者 Ryan Marten 与 Alex Shaw（Laude Institute）讲解：如何评测 AI 智能体在终端环境中完成真实世界任务的能力。</p>
@@ -427,6 +437,7 @@
         <div class="lecture__meta">
           <span class="pill pill--theme">智能体系统的数据</span>
           <span class="pill">Wed Oct 28</span>
+          <a class="pill pill--link" href="https://web.stanford.edu/class/cs329z/slides/lecture11.pdf" target="_blank" rel="noopener">Slides ↗</a>
         </div>
         <h3>智能体需要什么样的数据？</h3>
         <p class="lecture__desc">轨迹、示范与反馈；用于优化和用于评估的数据；数据飞轮；合成数据生成；以及从人机交互中收集数据。</p>
