@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>全局术语表 · CS329Z 精读站</title>
+<meta name="description" content="CS329Z 课程阅读中的核心术语：英文原词、中文译法、解释与相关阅读。">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body id="top">
+<div class="progress" aria-hidden="true"><div class="progress__bar"></div></div>
+
+<header class="topbar">
+  <a class="topbar__back" href="index.html"><span>← 返回课程表</span></a>
+  <div class="topbar__spacer"></div>
+  <a class="icon-btn" href="index.html" aria-label="首页" title="首页">⌂</a>
+  <button class="icon-btn" type="button" data-theme-toggle aria-label="切换主题">☾</button>
+</header>
+
+<main>
+  <div class="wrap">
+    <header class="article-head">
+      <p class="eyebrow">Glossary · 全局术语表</p>
+      <h1>读论文时卡住的词<br>都在这里</h1>
+      <p class="hero__sub">同一术语在全站保持统一译法。词条按主题分组，给出英文原词、中文译法、直白解释，以及它出现在哪篇阅读里。当前覆盖 Week 1–2 与智能体基础术语，随进度扩展。</p>
+    </header>
+
+    <details class="toc" open>
+      <summary>按主题浏览</summary>
+      <ol>
+        <li><a href="#agents">智能体与系统</a></li>
+        <li><a href="#reasoning">推理、规划与反思</a></li>
+        <li><a href="#transformer">Transformer 与注意力</a></li>
+        <li><a href="#memory">记忆、检索与向量搜索</a></li>
+        <li><a href="#tools">工具、协议与框架</a></li>
+        <li><a href="#engineering">工程、运维与优化</a></li>
+        <li><a href="#eval">评估、基准与可复现性</a></li>
+      </ol>
+    </details>
+
+    <section id="agents">
+      <h2 class="letter">智能体与系统</h2>
+      <dl class="glossary">
+        <dt>Agent <span class="en">智能体</span></dt>
+        <dd>能够感知环境、做出决策并采取行动的系统。在 LLM 语境下，通常指以语言模型为核心控制器，能调用工具、维护记忆、根据环境反馈调整行为的系统。注意：课程里把它看作一个<strong>程度问题</strong>（越自主越“智能体”），而不是非黑即白的分类。</dd>
+
+        <dt>Agentic <span class="en">智能体式的 / 具备智能体特性的</span></dt>
+        <dd>形容一个系统在多大程度上表现出自主性：环境越复杂、目标越开放、需要的人类监督越少、控制流越由 LLM 动态决定，它就越 agentic。</dd>
+
+        <dt>Compound AI System <span class="en">复合 AI 系统</span></dt>
+        <dd>由多个相互作用组件构成的 AI 系统：可能包含多次模型调用、检索器、外部工具、代码执行器等。与“单一模型”相对。BAIR 那篇的核心论点就是：最先进的结果越来越多来自复合系统，而不只是更大的模型。</dd>
+
+        <dt>Workflow <span class="en">工作流</span></dt>
+        <dd>用预先写好的控制逻辑（通常是普通代码）把多次 LLM 调用和工具调用串起来。路径基本固定，可预测、易调试；与“让 LLM 自己决定下一步”的 agent 相对。</dd>
+
+        <dt>Scaffold / Harness <span class="en">脚手架 / 运行框架</span></dt>
+        <dd>包在模型外面的那层工程结构：提示模板、工具接口、循环控制、上下文管理、错误处理、日志等。同一个模型换一套脚手架，任务表现可能差很多。课程里 harness 和 scaffold 基本同义，harness 更强调“把模型跑起来并评测”的那套装置。</dd>
+
+        <dt>Agent Loop <span class="en">智能体循环</span></dt>
+        <dd>智能体反复执行“观察 → 思考 → 行动”的循环，直到满足停止条件。ReAct 是这种循环最经典的提示格式。</dd>
+
+        <dt>SOTA <span class="en">State of the Art，最先进水平</span></dt>
+        <dd>某个基准上当前公开的最好成绩。读论文时要留意：SOTA 往往只比较准确率，不比较成本，这正是《AI Agents That Matter》批评的地方。</dd>
+
+        <dt>System 1 / System 2 <span class="en">系统 1 / 系统 2</span></dt>
+        <dd>借自认知心理学的说法：System 1 是快速、直觉、一次成型的生成；System 2 是慢速、审慎、多步推理。论文里常把 planning、reflection、debugging 这类多步方法称为 System 2 方法。</dd>
+      </dl>
+    </section>
+
+    <section id="reasoning">
+      <h2 class="letter">推理、规划与反思</h2>
+      <dl class="glossary">
+        <dt>Chain-of-Thought (CoT) <span class="en">思维链</span></dt>
+        <dd>让模型在给出答案前先写出中间推理步骤（“think step by step”）。它把更多测试时计算用在拆解问题上，也让模型的推理过程变得可观察。</dd>
+
+        <dt>Tree of Thoughts (ToT) <span class="en">思维树</span></dt>
+        <dd>CoT 的扩展：每一步生成多个候选想法，形成树状结构，再用 BFS/DFS 搜索，并用分类器或多数投票评估每个状态。适合需要探索多条解题路径的任务。</dd>
+
+        <dt>Self-Consistency <span class="en">自洽性</span></dt>
+        <dd>对同一个问题采样多条推理路径，然后对最终答案做多数投票。用增加采样次数换准确率，是“成本换精度”的典型例子。</dd>
+
+        <dt>ReAct <span class="en">Reason + Act，推理与行动交替</span></dt>
+        <dd>一种提示与循环模式：模型先写 Thought（思考），再选 Action（动作），环境返回 Observation（观察），如此往复。它把“推理”和“调工具/与环境交互”放进同一个轨迹里。</dd>
+
+        <dt>Reflection <span class="en">反思</span></dt>
+        <dd>智能体回顾自己过去的行动与结果，找出错误并调整后续策略。Reflexion 用语言形式的自我批评（而不是梯度更新）来改进下一轮尝试；注意它和“把记忆总结成更高层推断”的 reflection 不完全是一回事。</dd>
+
+        <dt>Planning <span class="en">规划</span></dt>
+        <dd>在行动前把大任务拆成子目标，或安排步骤顺序。常见做法包括提示模型分解任务、用外部经典规划器（如 PDDL），以及边执行边重规划。</dd>
+
+        <dt>Task Decomposition <span class="en">任务分解</span></dt>
+        <dd>把复杂任务拆成更小、可管理的子任务。可以由 LLM 自行分解、用任务专用指令分解，或由人类提供分解方案。</dd>
+
+        <dt>Hallucination <span class="en">幻觉</span></dt>
+        <dd>模型生成看似合理但事实错误或没有依据的内容。在智能体里，幻觉可能表现为编造工具参数、虚构观察结果，或重复无效动作。</dd>
+      </dl>
+    </section>
+
+    <section id="transformer">
+      <h2 class="letter">Transformer 与注意力</h2>
+      <dl class="glossary">
+        <dt>Token <span class="en">词元</span></dt>
+        <dd>模型处理文本的基本单位，通常是一个子词（subword）片段。一个英文单词可能被切成多个 token；中文常见一到两个字一个 token。上下文长度、成本和延迟都以 token 计。</dd>
+
+        <dt>Self-Attention <span class="en">自注意力</span></dt>
+        <dd>序列中每个位置根据与其他所有位置的关联程度，加权汇总其他位置的信息。它让模型直接建模任意距离的依赖，而不必像 RNN 那样逐步传递。</dd>
+
+        <dt>Query / Key / Value (Q, K, V) <span class="en">查询 / 键 / 值</span></dt>
+        <dd>自注意力的三组线性投影：Query 表示“我在找什么”，Key 表示“我能提供什么”，Value 是实际被汇总的内容。用 Q 与 K 的点积算注意力权重，再对 V 加权求和。</dd>
+
+        <dt>Scaled Dot-Product Attention <span class="en">缩放点积注意力</span></dt>
+        <dd>Attention(Q, K, V) = softmax(QK<sup>T</sup> / √d<sub>k</sub>)V。除以 √d<sub>k</sub> 是为了防止维度变大时点积过大、softmax 进入饱和区、梯度变小。</dd>
+
+        <dt>Multi-Head Attention <span class="en">多头注意力</span></dt>
+        <dd>把 Q、K、V 投影到多组低维子空间，各自并行做注意力，再拼接输出。不同头可以关注不同类型的关系（语法、指代、位置等）。</dd>
+
+        <dt>Positional Encoding <span class="en">位置编码</span></dt>
+        <dd>自注意力本身对顺序不敏感，因此要把位置信息注入输入。原始 Transformer 用不同频率的正弦/余弦函数；后续模型常用可学习位置嵌入或 RoPE 等相对位置方法。</dd>
+
+        <dt>Autoregressive <span class="en">自回归</span></dt>
+        <dd>逐 token 生成：每一步根据已生成的前缀预测下一个 token。GPT 类模型、RAG 的生成器和线性 Transformer 都采用这种方式。</dd>
+
+        <dt>Causal Mask <span class="en">因果掩码</span></dt>
+        <dd>训练自回归模型时，禁止位置 i 看到位置 j &gt; i 的 token，保证每个位置只根据左侧上下文预测。实现上是在注意力分数矩阵的上三角加 −∞。</dd>
+
+        <dt>KV Cache <span class="en">键值缓存</span></dt>
+        <dd>自回归解码时缓存已计算过的 Key 和 Value，避免每生成一个 token 都重算整个前缀。它把每步计算从“与序列长度平方相关”降为“与序列长度线性相关”，但显存占用随上下文增长。</dd>
+
+        <dt>Linear Attention <span class="en">线性注意力</span></dt>
+        <dd>把 softmax 注意力改写成可结合的形式：先汇总 Key–Value 外积，再与 Query 相乘，使复杂度从 O(n²) 降到 O(n)。代价是表达力通常弱于标准注意力；《Transformers are RNNs》用它把 Transformer 变成可并行训练、可循环推理的 RNN。</dd>
+
+        <dt>Context Length <span class="en">上下文长度</span></dt>
+        <dd>模型一次能看到的 token 数上限。注意力计算随长度平方增长，KV Cache 随长度线性增长，因此长上下文既贵又难精确利用。</dd>
+
+        <dt>Pretraining / Post-training <span class="en">预训练 / 后训练</span></dt>
+        <dd>预训练在大规模无标注语料上学习下一个 token 预测；后训练（指令微调、RLHF、DPO 等）让模型学会遵循指令、对齐偏好、使用工具。构建者通常只能控制后训练与推理阶段。</dd>
+      </dl>
+    </section>
+
+    <section id="memory">
+      <h2 class="letter">记忆、检索与向量搜索</h2>
+      <dl class="glossary">
+        <dt>Short-Term / Working Memory <span class="en">短期记忆 / 工作记忆</span></dt>
+        <dd>模型当前上下文窗口里的信息，包括对话历史、指令、工具返回结果。容量受上下文长度限制，对应“上下文内学习”。</dd>
+
+        <dt>Long-Term Memory <span class="en">长期记忆</span></dt>
+        <dd>存放在模型权重之外的持久信息，通常放在外部向量库或数据库里，需要时通过检索取回。容量理论上不受上下文窗口限制。</dd>
+
+        <dt>RAG (Retrieval-Augmented Generation) <span class="en">检索增强生成</span></dt>
+        <dd>先检索相关资料，再把检索结果放进提示里让模型生成答案。它让模型能使用训练数据之外、时效性更强或私有的知识，也便于给出引用。</dd>
+
+        <dt>Retriever <span class="en">检索器</span></dt>
+        <dd>从大规模文档库中找出与查询最相关的片段。常见类型有稀疏检索（BM25）、稠密检索（DPR）、混合检索，以及 ColBERT 这类延迟交互方法。</dd>
+
+        <dt>Reranker <span class="en">重排序器</span></dt>
+        <dd>在初步检索出候选片段后，用更昂贵的模型对候选重新打分排序，以提升最终放进上下文的内容质量。</dd>
+
+        <dt>BM25 <span class="en">稀疏检索的代表打分函数</span></dt>
+        <dd>基于词项匹配与倒排索引的经典检索算法：综合词频、逆文档频率和文档长度归一化。便宜、可解释、对精确关键词强，但难以处理同义改写。</dd>
+
+        <dt>Sparse vs. Dense Retrieval <span class="en">稀疏检索 vs. 稠密检索</span></dt>
+        <dd>稀疏检索把查询/文档表示成高维词项向量（如 BM25）；稠密检索用神经编码器压成低维连续向量，用内积或余弦检索。前者精确、后者语义化，混合检索常同时使用两者。</dd>
+
+        <dt>Dual-Encoder / Bi-encoder <span class="en">双编码器</span></dt>
+        <dd>查询和文档分别用独立编码器映射成向量，再用内积/余弦算相似度。文档向量可离线预计算，因此适合大规模检索；代价是查询与文档在编码时没有交互。</dd>
+
+        <dt>In-batch Negatives <span class="en">批内负样本</span></dt>
+        <dd>一个 batch 中每个问题各有正段落，把其他问题的正段落当作当前问题的负样本。一次前向就能得到 B² 个训练对，是训练 DPR 这类双编码器的关键技巧。</dd>
+
+        <dt>Hard Negative <span class="en">硬负样本</span></dt>
+        <dd>与查询词重叠高、但实际不相关的段落（常用 BM25 高分结果挖掘）。比随机负样本更能教会模型区分“表面相似”和“真正相关”。</dd>
+
+        <dt>Late Interaction <span class="en">延迟交互</span></dt>
+        <dd>查询和文档先各自独立编码成 token 级向量集合，再在编码结果之间做轻量交互（如 MaxSim）。介于“单向量双编码器”和“全交叉编码器”之间。</dd>
+
+        <dt>MaxSim <span class="en">最大相似度算子</span></dt>
+        <dd>ColBERT 的打分方式：对每个查询 token，取它与所有文档 token 的最大相似度，再对所有查询 token 求和。无参数、极便宜，且适合用向量索引剪枝。</dd>
+
+        <dt>Query Augmentation <span class="en">查询增强</span></dt>
+        <dd>ColBERT 用 [MASK] 把查询补齐到固定长度，让 BERT 在掩码位置生成额外查询表示，起到软性查询扩展与加权的作用。</dd>
+
+        <dt>Product Quantization / IVFPQ <span class="en">乘积量化 / 倒排+乘积量化索引</span></dt>
+        <dd>把向量切成若干子向量，每段用一个短码本编号表示，从而大幅压缩存储并加速近似距离计算。IVFPQ 先用聚类分区缩小搜索范围，再在压缩域中算距离。</dd>
+
+        <dt>MRR / Recall@k <span class="en">平均倒数排名 / 前 k 召回</span></dt>
+        <dd>MRR 是第一个相关结果排名倒数的平均值；Recall@k 是前 k 个结果中至少含一个相关文档的查询比例。检索论文常同时报告两者：一个看排序质量，一个看候选覆盖。</dd>
+
+        <dt>Embedding <span class="en">嵌入 / 向量表示</span></dt>
+        <dd>把文本、图像等对象映射成高维向量，使语义相近的对象在向量空间中距离更近。检索、聚类、去重都依赖它。</dd>
+
+        <dt>Vector Store <span class="en">向量库</span></dt>
+        <dd>专门存储和检索向量的数据库，支持快速的最大内积搜索或近似最近邻搜索。常见实现有 FAISS、ScaNN、HNSW 等。</dd>
+
+        <dt>MIPS <span class="en">Maximum Inner Product Search，最大内积搜索</span></dt>
+        <dd>给定查询向量，找出内积最大的若干向量。很多检索系统把相似度计算转化为 MIPS 问题。</dd>
+
+        <dt>ANN <span class="en">Approximate Nearest Neighbors，近似最近邻</span></dt>
+        <dd>不保证找到精确的最近邻，但用少量精度损失换取巨大速度提升。大规模向量检索几乎都用 ANN。</dd>
+
+        <dt>HNSW <span class="en">Hierarchical Navigable Small World，分层可导航小世界图</span></dt>
+        <dd>一种 ANN 索引：构建多层小世界图，上层是长距离“高速公路”，下层是精细连接；搜索时从上层随机节点出发逐层下降。是当前最常用的向量索引之一。</dd>
+
+        <dt>FAISS <span class="en">Facebook AI Similarity Search</span></dt>
+        <dd>Meta 开源的向量检索库。核心思想包括聚类与向量量化：先粗量化找候选簇，再在簇内细量化搜索。</dd>
+
+        <dt>ScaNN <span class="en">Scalable Nearest Neighbors</span></dt>
+        <dd>Google 的 ANN 库，主打各向异性向量量化：量化时尽量保持内积/角度关系，而不是只挑最近的聚类中心。</dd>
+
+        <dt>MIPS 相关算法 <span class="en">LSH / ANNOY</span></dt>
+        <dd>LSH 用哈希函数把相似输入映射到同一个桶；ANNOY 用随机投影树划分空间。两者都比 HNSW 更早，适合不同规模与精度需求。</dd>
+      </dl>
+    </section>
+
+    <section id="tools">
+      <h2 class="letter">工具、协议与框架</h2>
+      <dl class="glossary">
+        <dt>Tool Use <span class="en">工具使用</span></dt>
+        <dd>模型调用外部工具（搜索、计算器、代码执行、API 等）来获取模型权重里没有的信息或执行动作。工具返回的结果再进入上下文，影响下一步决策。</dd>
+
+        <dt>Function Calling <span class="en">函数调用</span></dt>
+        <dd>模型按结构化格式输出“要调用哪个函数、参数是什么”，由外部运行时执行。它是工具使用的一种标准化接口。</dd>
+
+        <dt>MCP (Model Context Protocol) <span class="en">模型上下文协议</span></dt>
+        <dd>一个开放协议，用来标准化模型/智能体与外部工具、数据源之间的连接方式。可以理解为“工具接入的通用插头”，让同一个工具被不同智能体复用。</dd>
+
+        <dt>MRKL <span class="en">Modular Reasoning, Knowledge and Language</span></dt>
+        <dd>一种神经-符号架构：LLM 作为路由器，把请求分发给最合适的“专家模块”（神经网络或符号工具，如计算器、天气 API）。</dd>
+
+        <dt>DSPy <span class="en">Declarative Self-improving Language Programs</span></dt>
+        <dd>把 LLM 流水线写成声明式模块（签名 + 模块），再由优化器自动选择提示、少样本示例甚至权重，以最大化目标指标。类比 PyTorch 的端到端优化，但模块不一定可微。</dd>
+
+        <dt>FrugalGPT <span class="en">—</span></dt>
+        <dd>一种成本优化框架：根据输入自动路由到不同的模型级联，在给定预算下最大化质量。它体现了“AI 网关/路由器”的思路。</dd>
+
+        <dt>HuggingGPT <span class="en">—</span></dt>
+        <dd>用 ChatGPT 做任务规划器，把用户请求拆成任务，选择 HuggingFace 上的专家模型执行，再汇总结果。是“LLM 作为调度器”的代表系统。</dd>
+
+        <dt>API-Bank <span class="en">—</span></dt>
+        <dd>评估工具增强 LLM 的基准，包含 53 个常用 API、完整工作流和 264 段标注对话；分三个层级考察调用、检索和规划 API 的能力。</dd>
+      </dl>
+    </section>
+
+    <section id="engineering">
+      <h2 class="letter">工程、运维与优化</h2>
+      <dl class="glossary">
+        <dt>Prompt Engineering <span class="en">提示工程</span></dt>
+        <dd>通过设计指令、示例、格式和推理步骤，让模型更稳定地产生想要的结果。它是上下文工程的一个子集。</dd>
+
+        <dt>Context Engineering <span class="en">上下文工程</span></dt>
+        <dd>更广义地管理“模型每一步能看到什么”：系统提示、工具定义、检索内容、历史轨迹、压缩摘要、记忆等。目标是在有限上下文窗口里放入最有用的信息。</dd>
+
+        <dt>Context Window <span class="en">上下文窗口</span></dt>
+        <dd>模型一次调用能处理的最大 token 数（输入 + 输出）。它是智能体记忆、长文档处理和长轨迹推理的硬约束。</dd>
+
+        <dt>Attention Budget <span class="en">注意力预算</span></dt>
+        <dd>把上下文窗口看作有限资源：每个 token 都要争夺模型的注意力。上下文越长，单个 token 获得的关注越少，因此“能放进去”不等于“能被用好”。</dd>
+
+        <dt>Context Rot <span class="en">上下文腐化</span></dt>
+        <dd>随着上下文变长，模型回忆和利用其中信息的能力下降的现象。它是“上下文工程”要解决的核心问题之一。</dd>
+
+        <dt>Compaction <span class="en">压缩 / 摘要压缩</span></dt>
+        <dd>当对话接近上下文上限时，把历史总结成更短的高保真摘要，再开启新的上下文窗口。关键是保留架构决策、未解决 bug、实现细节等后续仍需的信息。</dd>
+
+        <dt>Structured Note-taking <span class="en">结构化笔记</span></dt>
+        <dd>让智能体把进度、决策、约束等写入外部文件（如 NOTES.md、待办列表），需要时再读回。相当于给智能体一个可持久化的“草稿本”，跨越多个上下文窗口。</dd>
+
+        <dt>Sub-agent Architecture <span class="en">子智能体架构</span></dt>
+        <dd>主智能体把子任务委派给拥有独立上下文窗口的专门智能体，只接收其浓缩后的结果。好处是隔离探索噪声、并行工作；代价是 token 消耗与协调复杂度上升。</dd>
+
+        <dt>Just-in-time Retrieval <span class="en">即时检索 / 按需检索</span></dt>
+        <dd>不预先把所有相关资料塞进上下文，而是让智能体在需要时用工具（搜索、读文件、查数据库）主动获取。依赖良好的工具设计与文件命名等“可探索线索”。</dd>
+
+        <dt>MLOps / LLMOps <span class="en">机器学习运维 / LLM 运维</span></dt>
+        <dd>模型与 LLM 应用的部署、监控、日志、评估、回滚等工程实践。复合 AI 系统让运维更复杂：要追踪多次模型调用、工具调用和中间状态。</dd>
+
+        <dt>DataOps <span class="en">数据运维</span></dt>
+        <dd>围绕数据管道、数据质量、向量库更新等的运维实践。RAG 系统的行为高度依赖所服务数据的质量。</dd>
+
+        <dt>Observability <span class="en">可观测性</span></dt>
+        <dd>通过日志、追踪（trace）、指标等手段理解系统内部发生了什么。对智能体来说，关键是能看清每一步的输入、输出、工具调用和错误。</dd>
+
+        <dt>Trace <span class="en">轨迹 / 调用链</span></dt>
+        <dd>一次智能体运行的完整记录：每次模型调用、工具调用、观察结果和状态变化。调试与评估都依赖 trace。</dd>
+
+        <dt>Pareto Frontier <span class="en">帕累托前沿</span></dt>
+        <dd>在多目标优化中，不存在另一个方案能在所有目标上同时严格更优的那些方案组成的边界。论文里常用“准确率-成本”帕累托曲线来比较智能体：前沿上的智能体在同等成本下准确率最高，或同等准确率下成本最低。</dd>
+
+        <dt>Fixed / Variable Cost <span class="en">固定成本 / 可变成本</span></dt>
+        <dd>固定成本是一次性投入（如优化提示、选示例、调超参数）；可变成本是每次运行都要付的（输入/输出 token、API 调用）。智能体被使用得越多，可变成本越占主导。</dd>
+
+        <dt>System Design Space <span class="en">系统设计空间</span></dt>
+        <dd>给定任务下所有可能的系统设计方案：选哪些模型、检索器、工具、控制流、资源分配。复合 AI 系统的设计空间远大于单模型。</dd>
+      </dl>
+    </section>
+
+    <section id="eval">
+      <h2 class="letter">评估、基准与可复现性</h2>
+      <dl class="glossary">
+        <dt>Benchmark <span class="en">基准 / 评测集</span></dt>
+        <dd>一组标准化任务与评分方法，用来比较不同系统。好的基准应该能代表真实使用场景，并且不容易被“钻空子”。</dd>
+
+        <dt>Model Evaluation vs. Downstream Evaluation <span class="en">模型评估 vs. 下游评估</span></dt>
+        <dd>模型评估服务于研究：比较架构、数据、训练方法，通常控制算力、不看美元成本。下游评估服务于工程选型：关心在真实产品里“每次任务花多少钱、效果如何”，美元成本就是核心指标。</dd>
+
+        <dt>Cost-Controlled Evaluation <span class="en">成本受控评估</span></dt>
+        <dd>在比较智能体时同时报告成本，或固定预算再比准确率。否则“多采样、多重试”就能刷高准确率，无法判断方法本身是否真的更好。</dd>
+
+        <dt>Holdout Set <span class="en">留出集</span></dt>
+        <dd>不参与开发/调参、只用于最终评估的数据。智能体基准常因规模小、缺留出集而允许过拟合或走捷径。</dd>
+
+        <dt>Overfitting <span class="en">过拟合</span></dt>
+        <dd>系统过度适应训练/开发数据，在新数据上表现下降。智能体可能把基准里的具体任务、网站结构甚至答案硬编码进策略。</dd>
+
+        <dt>Shortcut <span class="en">捷径</span></dt>
+        <dd>不解决任务本身、却能提高基准分数的做法。例如针对特定网站硬编码 URL 规则。捷径让基准分数无法代表真实能力。</dd>
+
+        <dt>Distribution Shift / Drift <span class="en">分布偏移 / 漂移</span></dt>
+        <dd>测试数据与训练/开发数据分布不同，或环境随时间变化（如网站改版）。智能体基准需要专门的留出任务来检验对漂移的鲁棒性。</dd>
+
+        <dt>Reproducibility <span class="en">可复现性</span></dt>
+        <dd>仅凭论文附带的代码和数据，就能复现论文报告的结果。智能体评估的可复现性尤其差：环境、工具版本、评估脚本、随机性都会影响结果。</dd>
+
+        <dt>Standardization <span class="en">标准化</span></dt>
+        <dd>统一的评估脚本、数据格式、运行环境和报告规范。缺少标准化会导致不同论文的数字不可比，甚至同一基准上的结果互相矛盾。</dd>
+
+        <dt>Human-in-the-Loop <span class="en">人在回路</span></dt>
+        <dd>人类在智能体执行过程中提供监督、反馈、确认或纠正。当前基准大多只测“完全自主”或“纯聊天”两个极端，忽略了真实使用中的人机协作。</dd>
+
+        <dt>Error Bar / Confidence Interval <span class="en">误差棒 / 置信区间</span></dt>
+        <dd>用来表示结果的不确定性。智能体评估很贵，常常只跑一次、不报告误差，导致读者无法判断分数差异是否显著。</dd>
+      </dl>
+    </section>
+
+    <footer class="site-foot">
+      <p>术语译法会在全站保持一致。发现译法不一致或解释不清楚，直接在对应文章页对照英文原文，或在后续迭代中修正。</p>
+      <p><a href="index.html">← 返回课程表</a></p>
+    </footer>
+  </div>
+</main>
+
+<a class="to-top" href="#top" aria-label="回到顶部">↑</a>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

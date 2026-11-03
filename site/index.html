@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CS329Z 精读站 · Engineering AI Agents</title>
+<meta name="description" content="Stanford CS329Z 课程阅读的中文精读：导读、术语、全文译文、图表与要点回顾。">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body id="top">
+<div class="progress" aria-hidden="true"><div class="progress__bar"></div></div>
+
+<header class="topbar">
+  <a class="topbar__back" href="index.html"><span>CS329Z 精读站</span></a>
+  <div class="topbar__spacer"></div>
+  <a class="icon-btn" href="glossary.html" aria-label="术语表" title="术语表">Aa</a>
+  <button class="icon-btn" type="button" data-theme-toggle aria-label="切换主题">☾</button>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap wrap--wide">
+      <p class="eyebrow">Stanford CS329Z · Fall 2026</p>
+      <h1>工程化 AI 智能体<br>课程阅读精读站</h1>
+      <p class="hero__sub">把课程表里的英文论文、博客和规范，整理成中文精读：篇首导读、术语解释、全文译文、图表与要点回顾。目标不是逐字机翻，而是把论证、语气和术语的准确含义一起讲清楚。</p>
+      <div class="hero__stats">
+        <span class="stat"><strong>57</strong> 篇阅读</span>
+        <span class="stat"><strong>43</strong> 篇必读</span>
+        <span class="stat"><strong>14</strong> 篇选读</span>
+        <span class="stat"><strong>2</strong> 周已完成</span>
+      </div>
+      <p class="notice">当前进度：<strong>Week 1–2 共九篇已完成</strong>。其余阅读按讲逐批推进；未完成的篇目先链接到原文，方便你先读英文。术语统一收录在 <a href="glossary.html">全局术语表</a>。</p>
+    </div>
+  </section>
+
+  <div class="wrap wrap--wide">
+
+    <section class="week" id="week1">
+      <div class="week__head">
+        <span class="week__num">01</span>
+        <span class="week__label">Week 1 · Wed Sep 23</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">基础与全景</span>
+          <span class="pill">Wed Sep 23</span>
+        </div>
+        <h3>导论：什么是智能体系统？</h3>
+        <p class="lecture__desc">课程导览、智能体简史，以及智能体的解剖结构：LLM 核心、推理、记忆、工具与环境。复合 AI 系统、工作流与智能体的区别，以及可靠性、训练、安全与评估等核心挑战。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week1/01-compound-ai-systems.html">从模型到复合 AI 系统的转变</a>
+              <span class="reading__en">Zaharia et al. “The Shift from Models to Compound AI Systems.” BAIR Blog (2024).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week1/02-llm-powered-autonomous-agents.html">由 LLM 驱动的自主智能体</a>
+              <span class="reading__en">Weng. “LLM Powered Autonomous Agents.” Lil’Log (2023).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week1/03-ai-agents-that-matter.html">真正重要的 AI 智能体</a>
+              <span class="reading__en">Kapoor et al. “AI Agents That Matter.” TMLR (2025).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week2">
+      <div class="week__head">
+        <span class="week__num">02</span>
+        <span class="week__label">Week 2 · Sep 28 / Sep 30</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Sep 28</span>
+        </div>
+        <h3>面向构建者的 LLM</h3>
+        <p class="lecture__desc">从智能体构建者的视角看语言模型内部：解码策略、Transformer 注意力（含线性与混合注意力）与上下文长度、预训练到后训练的流程、推理与测试时扩展、结构化输入输出与约束解码，以及上下文工程。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week2/01-attention-is-all-you-need.html">注意力就是你所需要的一切</a>
+              <span class="reading__en">Vaswani et al. “Attention Is All You Need.” NeurIPS (2017).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week2/02-transformers-are-rnns.html">Transformer 就是 RNN：带线性注意力的快速自回归 Transformer</a>
+              <span class="reading__en">Katharopoulos et al. “Transformers are RNNs: Fast Autoregressive Transformers with Linear Attention.” ICML (2020).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week2/03-context-engineering.html">面向 AI 智能体的有效上下文工程</a>
+              <span class="reading__en">Rajasekaran et al. “Effective Context Engineering for AI Agents.” Anthropic (2025).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">构建模块</span>
+          <span class="pill">Wed Sep 30</span>
+        </div>
+        <h3>检索增强生成（RAG）</h3>
+        <p class="lecture__desc">为什么检索有用，以及 RAG 流水线的端到端环节：索引（分块、上下文检索、RAPTOR、HNSW）、从 BM25、DPR 到混合搜索的检索器、重排序与 ColBERT、智能体式 RAG（Self-RAG、Search-R1），以及常见失败模式。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week2/04-rag.html">面向知识密集型 NLP 任务的检索增强生成</a>
+              <span class="reading__en">Lewis et al. “Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks.” NeurIPS (2020).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week2/05-dpr.html">面向开放域问答的稠密段落检索</a>
+              <span class="reading__en">Karpukhin et al. “Dense Passage Retrieval for Open-Domain Question Answering.” EMNLP (2020).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="week2/06-colbert.html">ColBERT：通过 BERT 上的上下文化延迟交互实现高效段落检索</a>
+              <span class="reading__en">Khattab &amp; Zaharia. “ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT.” SIGIR (2020).</span>
+            </div>
+            <span class="reading__status reading__status--done">已精读</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week3">
+      <div class="week__head">
+        <span class="week__num">03</span>
+        <span class="week__label">Week 3 · Oct 5 / Oct 7</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Oct 5</span>
+        </div>
+        <h3>工具使用与函数调用</h3>
+        <p class="lecture__desc">LLM 为什么需要工具，以及它如何学会使用工具：Toolformer、用 Gorilla 和 ToolLLM 扩展到成千上万个 API、从 REST 到函数调用再到 MCP 的标准接口、用 BFCL、ToolBench 和 τ-bench 评估工具使用，以及常见失败模式。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2302.04761" target="_blank" rel="noopener">Toolformer：语言模型可以自学使用工具</a>
+              <span class="reading__en">Schick et al. “Toolformer: Language Models Can Teach Themselves to Use Tools.” NeurIPS (2023).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2305.15334" target="_blank" rel="noopener">Gorilla：连接海量 API 的大语言模型</a>
+              <span class="reading__en">Patil et al. “Gorilla: Large Language Model Connected with Massive APIs.” NeurIPS (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://modelcontextprotocol.io/specification/2025-06-18" target="_blank" rel="noopener">模型上下文协议（MCP）规范</a>
+              <span class="reading__en">Model Context Protocol Specification, revision 2025-06-18. modelcontextprotocol.io (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">框架与智能体设计</span>
+          <span class="pill">Wed Oct 7</span>
+        </div>
+        <h3>框架与编排</h3>
+        <p class="lecture__desc">智能体工程的三大支柱——数据、系统与评估；DSPy（签名、模块、优化器）与 LangGraph（状态、节点、边）的现场演示；开源智能体脚手架巡礼（mini-SWE-agent、OpenHands、Pi）、用 Temporal 做持久化编排、可观测性工具与最佳实践。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2310.03714" target="_blank" rel="noopener">DSPy：把声明式语言模型调用编译成自我改进的流水线</a>
+              <span class="reading__en">Khattab et al. “DSPy: Compiling Declarative Language Model Calls into Self-Improving Pipelines.” ICLR (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://docs.langchain.com/oss/python/langgraph/overview" target="_blank" rel="noopener">LangGraph 概览</a>
+              <span class="reading__en">LangChain. “LangGraph Overview.” LangChain Docs.</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arena.ai/blog/coding-agents-harness-tax" target="_blank" rel="noopener">HarnessTax：脚手架对编程智能体到底有多重要？</a>
+              <span class="reading__en">Arena.ai. “HarnessTax: How Much Does the Harness Matter for Coding Agents?” Arena Blog (2026).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week4">
+      <div class="week__head">
+        <span class="week__num">04</span>
+        <span class="week__label">Week 4 · Oct 12 / Oct 14</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Oct 12</span>
+        </div>
+        <h3>智能体设计模式与脚手架</h3>
+        <p class="lecture__desc">工作流与智能体的区别，以及各自的设计模式：五种可组合的工作流模式、推理与行动模式（ReAct、Reflexion、CodeAct、ReWOO）、上下文管理模式（事件日志、压缩、观察掩蔽、上下文隔离），并以 Pi 脚手架为案例。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2210.03629" target="_blank" rel="noopener">ReAct：在语言模型中协同推理与行动</a>
+              <span class="reading__en">Yao et al. “ReAct: Synergizing Reasoning and Acting in Language Models.” ICLR (2023).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.anthropic.com/engineering/building-effective-agents" target="_blank" rel="noopener">构建有效的 AI 智能体</a>
+              <span class="reading__en">Schluntz &amp; Zhang. “Building Effective AI Agents.” Anthropic (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.langchain.com/blog/context-engineering-for-agents" target="_blank" rel="noopener">上下文工程</a>
+              <span class="reading__en">LangChain. “Context Engineering.” LangChain Blog (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2303.11366" target="_blank" rel="noopener">Reflexion：具备语言强化学习的语言智能体</a>
+              <span class="reading__en">Shinn et al. “Reflexion: Language Agents with Verbal Reinforcement Learning.” NeurIPS (2023). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+2</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2402.01030" target="_blank" rel="noopener">可执行代码动作能激发更好的 LLM 智能体</a>
+              <span class="reading__en">Wang et al. “Executable Code Actions Elicit Better LLM Agents.” ICML (2024). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">记忆与多智能体系统</span>
+          <span class="pill">Wed Oct 14</span>
+        </div>
+        <h3>智能体记忆架构</h3>
+        <p class="lecture__desc">智能体为什么需要记忆，以及四种记忆类型（工作记忆、情景记忆、语义记忆、程序记忆）。四种架构模式：技能库、MemGPT 式分层结构、反思式巩固、记忆维护。记忆基准，以及遗忘、隐私和过度个性化的开放问题。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2309.02427" target="_blank" rel="noopener">语言智能体的认知架构</a>
+              <span class="reading__en">Sumers et al. “Cognitive Architectures for Language Agents.” TMLR (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2310.08560" target="_blank" rel="noopener">MemGPT：把 LLM 当作操作系统</a>
+              <span class="reading__en">Packer et al. “MemGPT: Towards LLMs as Operating Systems.” arXiv (2023).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2304.03442" target="_blank" rel="noopener">生成式智能体：人类行为的交互式模拟</a>
+              <span class="reading__en">Park et al. “Generative Agents: Interactive Simulacra of Human Behavior.” UIST (2023).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week5">
+      <div class="week__head">
+        <span class="week__num">05</span>
+        <span class="week__label">Week 5 · Oct 19 / Oct 21</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Oct 19</span>
+        </div>
+        <h3>多智能体系统</h3>
+        <p class="lecture__desc">何时使用单智能体、何时使用多智能体，以及如何构建：编排模式（编排器、蜂群、混合）、通过交接与消息板以及 A2A 协议通信、协调基础设施（任务账本、共享记忆、工作树隔离），以及多智能体系统为什么会失败。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2308.08155" target="_blank" rel="noopener">AutoGen：通过多智能体对话实现下一代 LLM 应用</a>
+              <span class="reading__en">Wu et al. “AutoGen: Enabling Next-Gen LLM Applications via Multi-Agent Conversation.” COLM (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2503.13657" target="_blank" rel="noopener">多智能体 LLM 系统为什么会失败？</a>
+              <span class="reading__en">Cemri et al. “Why Do Multi-Agent LLM Systems Fail?” NeurIPS Datasets &amp; Benchmarks (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2512.08296" target="_blank" rel="noopener">走向智能体系统扩展的科学</a>
+              <span class="reading__en">Kim et al. “Towards a Science of Scaling Agent Systems.” arXiv (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">优化</span>
+          <span class="pill">Wed Oct 21</span>
+        </div>
+        <h3>优化</h3>
+        <p class="lecture__desc">优化何时划算、怎么做：上下文优化（自举少样本、MIPROv2、OPRO、TextGrad、GEPA）、权重优化（在智能体轨迹上做 SFT、PPO 与 GRPO 强化学习、同策略蒸馏）、把智能体当作优化器（Darwin Gödel Machine、自动研究），以及何时优化提示、何时优化权重。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2507.19457" target="_blank" rel="noopener">GEPA：反思式提示进化可以胜过强化学习</a>
+              <span class="reading__en">Agrawal et al. “GEPA: Reflective Prompt Evolution Can Outperform Reinforcement Learning.” ICLR (2026).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2406.11695" target="_blank" rel="noopener">为多阶段语言模型程序优化指令与示例</a>
+              <span class="reading__en">Opsahl-Ong et al. “Optimizing Instructions and Demonstrations for Multi-Stage Language Model Programs.” EMNLP (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2402.03300" target="_blank" rel="noopener">DeepSeekMath：突破开源语言模型数学推理的极限</a>
+              <span class="reading__en">Shao et al. “DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models.” arXiv (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week6">
+      <div class="week__head">
+        <span class="week__num">06</span>
+        <span class="week__label">Week 6 · Oct 26 / Oct 28</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Oct 26</span>
+        </div>
+        <h3>📺 客座讲座：Terminal-Bench</h3>
+        <p class="lecture__desc">Terminal-Bench 的联合创作者 Ryan Marten 与 Alex Shaw（Laude Institute）讲解：如何评测 AI 智能体在终端环境中完成真实世界任务的能力。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.tbench.ai/" target="_blank" rel="noopener">Terminal-Bench 项目站</a>
+              <span class="reading__en">Terminal-Bench project site (leaderboard, tasks, and harness).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2601.11868" target="_blank" rel="noopener">Terminal-Bench：在命令行界面的高难度真实任务上评测智能体</a>
+              <span class="reading__en">Merrill et al. “Terminal-Bench: Benchmarking Agents on Hard, Realistic Tasks in Command Line Interfaces.” ICLR (2026).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">智能体系统的数据</span>
+          <span class="pill">Wed Oct 28</span>
+        </div>
+        <h3>智能体需要什么样的数据？</h3>
+        <p class="lecture__desc">轨迹、示范与反馈；用于优化和用于评估的数据；数据飞轮；合成数据生成；以及从人机交互中收集数据。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.sh-reya.com/blog/ai-engineering-flywheel/" target="_blank" rel="noopener">LLM 应用的数据飞轮</a>
+              <span class="reading__en">Shankar. “Data Flywheels for LLM Applications.” (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://aclanthology.org/2024.emnlp-main.54/" target="_blank" rel="noopener">大语言模型用于数据标注与合成：综述</a>
+              <span class="reading__en">Tan et al. “Large Language Models for Data Annotation and Synthesis: A Survey.” EMNLP (2024). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week7">
+      <div class="week__head">
+        <span class="week__num">07</span>
+        <span class="week__label">Week 7 · Nov 2 / Nov 4</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Nov 2</span>
+        </div>
+        <h3>数据选择与质量</h3>
+        <p class="lecture__desc">寻找信息量最大的数据、过滤与选择策略、小而精准的基准、标注实践、质量评估，以及从智能体轨迹构建数据集。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2504.21798" target="_blank" rel="noopener">SWE-smith：为软件工程智能体扩展数据</a>
+              <span class="reading__en">Yang et al. “SWE-smith: Scaling Data for Software Engineering Agents.” NeurIPS D&amp;B (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2404.12272" target="_blank" rel="noopener">谁来验证验证者？让 LLM 辅助评估与人类偏好对齐</a>
+              <span class="reading__en">Shankar et al. “Who Validates the Validators? Aligning LLM-Assisted Evaluation with Human Preferences.” UIST (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2305.11206" target="_blank" rel="noopener">LIMA：对齐中少即是多</a>
+              <span class="reading__en">Zhou et al. “LIMA: Less Is More for Alignment.” NeurIPS (2023). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">智能体系统的评估</span>
+          <span class="pill">Wed Nov 4</span>
+        </div>
+        <h3>评估基础与基准设计</h3>
+        <p class="lecture__desc">评估为什么难、四元组框架（请求、环境、停止条件、评分器）、如何设计每个组件、好基准的性质、贴近真实的脚手架，以及可靠性维度。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2507.02825" target="_blank" rel="noopener">建立构建严谨智能体基准的最佳实践</a>
+              <span class="reading__en">Zhu et al. “Establishing Best Practices for Building Rigorous Agentic Benchmarks.” (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://ofir.io/How-to-Build-Good-Language-Modeling-Benchmarks/" target="_blank" rel="noopener">如何构建好的语言建模基准</a>
+              <span class="reading__en">Press. “How to Build Good Language Modeling Benchmarks.” (2024). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+2</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2402.14992" target="_blank" rel="noopener">tinyBenchmarks：用更少样本评估 LLM</a>
+              <span class="reading__en">Polo et al. “tinyBenchmarks: Evaluating LLMs with Fewer Examples.” ICML (2024). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week8">
+      <div class="week__head">
+        <span class="week__num">08</span>
+        <span class="week__label">Week 8 · Nov 9 / Nov 11</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Nov 9</span>
+        </div>
+        <h3>📺 与吴恩达的炉边谈话</h3>
+        <p class="lecture__desc">由 Diyi Yang 主持，与吴恩达教授对话。吴恩达是 DeepLearning.AI 创始人、Coursera 联合创始人、Google Brain 创始负责人，也是斯坦福计算机科学教授。</p>
+        <p class="lecture__desc"><em>本讲无指定阅读。</em></p>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Wed Nov 11</span>
+        </div>
+        <h3>LLM 作为裁判与评估基础设施</h3>
+        <p class="lecture__desc">三类评分器、裁判提示的设计、已知偏差、成对评估与逐点评估、非确定性指标（pass@k 与 pass^k）、脚手架设计，以及 Anthropic 的八步路线图。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents" target="_blank" rel="noopener">揭开 AI 智能体评估的面纱</a>
+              <span class="reading__en">Grace et al. “Demystifying Evals for AI Agents.” Anthropic (2026).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2306.05685" target="_blank" rel="noopener">用 MT-Bench 和 Chatbot Arena 评判“LLM 裁判”</a>
+              <span class="reading__en">Zheng et al. “Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.” NeurIPS (2023).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2512.17267" target="_blank" rel="noopener">AutoMetrics：用自动生成的评估器近似人类判断</a>
+              <span class="reading__en">Ryan et al. “AutoMetrics: Approximate Human Judgements with Automatically Generated Evaluators.” ICLR (2026).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://openreview.net/forum?id=4BjGVZ7Bxn" target="_blank" rel="noopener">AutoLibra：从开放式人类反馈中归纳智能体指标</a>
+              <span class="reading__en">Zhu et al. “AutoLibra: Agent Metric Induction from Open-Ended Human Feedback.” ICLR (2026). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week9">
+      <div class="week__head">
+        <span class="week__num">09</span>
+        <span class="week__label">Week 9 · Nov 16 / Nov 18</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Nov 16</span>
+        </div>
+        <h3>📺 客座讲座：SWE-bench</h3>
+        <p class="lecture__desc">SWE-bench 的创作者 Carlos Jimenez 与 Alexander Wettig（Anthropic）讲解：面向编程能力及更广泛领域的评估如何演变，以及未来走向。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2310.06770" target="_blank" rel="noopener">SWE-bench：语言模型能解决真实 GitHub 问题吗？</a>
+              <span class="reading__en">Jimenez et al. “SWE-bench: Can Language Models Resolve Real-World GitHub Issues?” ICLR (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">安全</span>
+          <span class="pill">Wed Nov 18</span>
+        </div>
+        <h3>智能体安全与护栏</h3>
+        <p class="lecture__desc">工具访问带来的隐私风险、提示注入（含间接注入）、红队测试、沙箱与权限模型、输出护栏、责任考量、负责任部署，以及人在回路模式。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2409.00138" target="_blank" rel="noopener">PrivacyLens：评估语言模型在行动中的隐私规范意识</a>
+              <span class="reading__en">Shao et al. “PrivacyLens: Evaluating Privacy Norm Awareness of LMs in Action.” NeurIPS D&amp;B (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2508.10880" target="_blank" rel="noopener">通过模拟寻找 LLM 智能体的隐私风险</a>
+              <span class="reading__en">Zhang &amp; Yang. “Searching for Privacy Risks in LLM Agents via Simulation.” arXiv (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">03</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2601.05918" target="_blank" rel="noopener">作为强大去匿名化工具的智能体 LLM</a>
+              <span class="reading__en">Li. “Agentic LLMs as Powerful Deanonymizers.” arXiv (2026).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2603.02983" target="_blank" rel="noopener">面向 LLM 智能体的情境化隐私防御</a>
+              <span class="reading__en">Wen et al. “Contextualized Privacy Defense for LLM Agents.” arXiv (2026). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+2</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://openai.com/index/prompt-injections/" target="_blank" rel="noopener">理解提示注入：前沿安全挑战</a>
+              <span class="reading__en">OpenAI. “Understanding Prompt Injections: A Frontier Security Challenge.” (2025). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+3</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.anthropic.com/news/anthropics-responsible-scaling-policy" target="_blank" rel="noopener">Anthropic 的负责任扩展政策</a>
+              <span class="reading__en">Anthropic. “Anthropic’s Responsible Scaling Policy.” (2023). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="week10">
+      <div class="week__head">
+        <span class="week__num">10</span>
+        <span class="week__label">Week 10 · Nov 23 / Nov 25</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Mon Nov 23 · Wed Nov 25</span>
+        </div>
+        <h3>感恩节假期，无课</h3>
+        <p class="lecture__desc">本周停课。可以用这段时间补读前几周的内容，或推进课程项目。</p>
+      </article>
+    </section>
+
+    <section class="week" id="week11">
+      <div class="week__head">
+        <span class="week__num">11</span>
+        <span class="week__label">Week 11 · Nov 30 / Dec 2</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">编程智能体与主动式智能体</span>
+          <span class="pill">Mon Nov 30</span>
+        </div>
+        <h3>编程与软件智能体</h3>
+        <p class="lecture__desc">编程智能体的端到端工作原理：SWE-agent、Claude Code 与 OpenHands 的架构，脚手架作为设计决策，SWE-bench 与四元组框架的实践，以及智能体时代软件开发的未来。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2405.15793" target="_blank" rel="noopener">SWE-agent：智能体-计算机接口实现自动化软件工程</a>
+              <span class="reading__en">Yang et al. “SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering.” NeurIPS (2024).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading">
+            <span class="reading__num">02</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2407.16741" target="_blank" rel="noopener">OpenHands：面向 AI 软件开发者的开放平台</a>
+              <span class="reading__en">Wang et al. “OpenHands: An Open Platform for AI Software Developers.” ICLR (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.anthropic.com/engineering/claude-code-best-practices" target="_blank" rel="noopener">Claude Code：智能体编程最佳实践</a>
+              <span class="reading__en">Anthropic. “Claude Code: Best Practices for Agentic Coding.” (2025). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+2</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents" target="_blank" rel="noopener">面向长时间运行智能体的有效脚手架</a>
+              <span class="reading__en">Young. “Effective Harnesses for Long-Running Agents.” Anthropic (2025). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill">Wed Dec 2</span>
+        </div>
+        <h3>主动式智能体</h3>
+        <p class="lecture__desc">从被动响应到主动行动：通用用户模型（GUM）、下一动作预测、开源主动式个人智能体、隐私与信任影响，以及智能体何时应该主动发起、何时应该等待（混合主动）。</p>
+        <ul class="readings">
+          <li class="reading">
+            <span class="reading__num">01</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2505.10831" target="_blank" rel="noopener">从计算机使用中构建通用用户模型</a>
+              <span class="reading__en">Shaikh et al. “Creating General User Models from Computer Use.” UIST (2025).</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+1</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://arxiv.org/abs/2603.05923" target="_blank" rel="noopener">从人机交互中学习下一动作预测器</a>
+              <span class="reading__en">Shaikh et al. “Learning Next Action Predictors from Human-Computer Interaction.” arXiv (2026). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+          <li class="reading reading--additional">
+            <span class="reading__num">+2</span>
+            <div class="reading__body">
+              <a class="reading__title" href="https://github.com/openclaw/openclaw" target="_blank" rel="noopener">OpenClaw：开源主动式 AI 智能体</a>
+              <span class="reading__en">Steinberger. “OpenClaw: Open-source proactive AI agent.” (2025). · 选读</span>
+            </div>
+            <span class="reading__status reading__status--todo">待制作</span>
+          </li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="week" id="final">
+      <div class="week__head">
+        <span class="week__num">—</span>
+        <span class="week__label">Wed Dec 9 · Finals</span>
+      </div>
+      <article class="lecture">
+        <div class="lecture__meta">
+          <span class="pill pill--theme">开放问题与最终演示</span>
+          <span class="pill">Wed Dec 9</span>
+        </div>
+        <h3>期末项目演示日</h3>
+        <p class="lecture__desc">在期末考试周举行，时间 15:30–18:30，地点待定。</p>
+      </article>
+    </section>
+
+  </div>
+</main>
+
+<footer class="site-foot">
+  <div class="wrap wrap--wide">
+    <p>基于 Stanford CS329Z: Engineering AI Agents（Fall 2026）课程表整理。译文与导读仅供个人学习使用，原文版权归原作者所有。</p>
+    <p>页面为本地静态文件，可离线阅读。术语译法以 <a href="glossary.html">全局术语表</a> 为准。</p>
+  </div>
+</footer>
+
+<a class="to-top" href="#top" aria-label="回到顶部">↑</a>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
